@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financing Options | EHX Dealer Resource</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: url('images/background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.85);
+            z-index: -2;
+        }
+        
+        /* Header iframe */
+        .header-iframe {
+            width: 100%;
+            border: none;
+            height: 80px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: #011f85;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            width: 100%;
+        }
+        
+        .page-header {
+            margin-bottom: 40px;
+        }
+        
+        .page-title {
+            font-size: 36px;
+            color: #011f85;
+            margin-bottom: 16px;
+        }
+        
+        .page-subtitle {
+            font-size: 18px;
+            color: #555;
+            border-left: 4px solid #6366f1;
+            padding-left: 20px;
+        }
+        
+        .section {
+            margin-bottom: 50px;
+        }
+        
+        .section-title {
+            font-size: 24px;
+            color: #011f85;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        /* Lender Cards Grid */
+        .lenders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .lender-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .lender-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .lender-header {
+            padding: 24px;
+            color: white;
+        }
+        
+        .lender-header.lightreach { background: linear-gradient(90deg, #10b981, #0f766e); }
+        .lender-header.goodleap { background: linear-gradient(90deg, #3b82f6, #0891b2); }
+        .lender-header.skylight { background: linear-gradient(90deg, #6366f1, #2563eb); }
+        .lender-header.loans { background: linear-gradient(90deg, #334155, #0f172a); }
+        .lender-header.goodleap-loan { background: linear-gradient(90deg, #3b82f6, #0891b2); }
+        
+        .lender-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .lender-type {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .lender-body {
+            padding: 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .info-row {
+            display: flex;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        
+        .info-label {
+            width: 110px;
+            font-weight: 600;
+            color: #4b5563;
+        }
+        
+        .info-value {
+            flex: 1;
+            color: #1f2937;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: #e5e7eb;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .badge-market {
+            display: inline-block;
+            background: #0f172a;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 999px;
+            margin: 4px 6px 4px 0;
+        }
+        
+        .badge-exclusion {
+            background: #7f1d1d;
+        }
+        
+        .battery-pill {
+            display: inline-block;
+            background: #0f172a;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 999px;
+            margin: 4px 6px 4px 0;
+        }
+        
+        .divider {
+            height: 1px;
+            background: #e5e7eb;
+            margin: 20px 0;
+        }
+        
+        /* Spec Section inside cards */
+        .spec-section {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .spec-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+            margin-bottom: 6px;
+        }
+        
+        .spec-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+        
+        /* Download Buttons */
+        .download-group {
+            margin-top: 16px;
+        }
+        
+        .btn-download {
+            display: inline-block;
+            text-align: center;
+            padding: 8px 16px;
+            background: #0f172a;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 12px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            transition: opacity 0.2s;
+        }
+        
+        .btn-download:hover {
+            opacity: 0.85;
+        }
+        
+        .btn-cheat-sheet {
+            background: #6366f1;
+        }
+        
+        /* Comparison Table */
+        .comparison-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .comparison-title {
+            font-size: 24px;
+            color: #011f85;
+            margin-bottom: 20px;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow-x: auto;
+            display: block;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .comparison-table th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .check {
+            color: #10b981;
+            font-weight: bold;
+        }
+        
+        .close {
+            color: #ef4444;
+        }
+        
+        /* Footer iframe */
+        .footer-iframe {
+            width: 100%;
+            border: none;
+            height: auto;
+            min-height: 350px;
+            margin-top: 60px;
+            display: block;
+        }
+        
+        /* Chat Widget Container */
+        .chat-widget-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+            width: 380px;
+            height: 450px;
+            pointer-events: none;
+        }
+        
+        .chat-widget-container iframe {
+            pointer-events: auto;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: transparent;
+            border-radius: 20px;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+    <iframe src="components/header.html" class="header-iframe" id="headerIframe"></iframe>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">💰 Financing Options</h1>
+            <p class="page-subtitle">Compare lender requirements, markets, equipment compatibility, cheat sheets, and spec sheets.</p>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Lender Details</h2>
+            <div class="lenders-grid">
+                
+                <!-- 1. Palmetto LightReach -->
+                <div class="lender-card">
+                    <div class="lender-header lightreach">
+                        <div class="lender-name">Palmetto LightReach</div>
+                        <div class="lender-type">Solar Lease / PPA</div>
+                    </div>
+                    <div class="lender-body">
+                        <div class="info-row"><div class="info-label">📍 Markets</div><div class="info-value">Florida, Maryland, New Jersey</div></div>
+                        <div class="info-row"><div class="info-label">💳 Credit Score</div><div class="info-value">Min 680 FICO (soft pull)</div></div>
+                        <div class="info-row"><div class="info-label">📊 Max Offset</div><div class="info-value">150%</div></div>
+                        <div class="info-row"><div class="info-label">📞 Support</div><div class="info-value"><a href="tel:8885313327" style="color:#6366f1;">888-531-3327</a></div></div>
+                        
+                        <div class="divider"></div>
+                        
+                        <!-- Equipment Specs -->
+                        <div class="spec-section">
+                            <div class="spec-label">Module</div>
+                            <div class="spec-value">SIRIUS 450W</div>
+                        </div>
+                        <div class="spec-section">
+                            <div class="spec-label">Microinverter</div>
+                            <div class="spec-value">IQ8HC Microinverter</div>
+                        </div>
+                        <div class="spec-section">
+                            <div class="spec-label">Battery Options</div>
+                            <div>
+                                <span class="battery-pill">Enphase IQ5P</span>
+                                <span class="battery-pill">Tesla Powerwall 3</span>
+                            </div>
+                        </div>
+                        
+                        <div class="download-group">
+                            <a href="https://drive.google.com/uc?export=download&id=1cvUqOKDg2f1le5dnGCtA2x58BKbXz6Ha" class="btn-download btn-cheat-sheet" target="_blank">📘 Cheat Sheet</a>
+                            <a href="https://drive.google.com/uc?export=download&id=1qd7mQlLXnWfL2SIzzP3fe3iBcmITYgKH" class="btn-download" target="_blank">📄 Panel Spec</a>
+                            <a href="https://drive.google.com/uc?export=download&id=1UkjD8dsCMhuQxZvsDJfCS_79F30oiTEy" class="btn-download" target="_blank">🔋 IQ5P Spec</a>
+                            <a href="https://drive.google.com/uc?export=download&id=1IczXYtuqYXoMFlCwcQaZF43DW2RnGz7k" class="btn-download" target="_blank">🔋 PW3 Spec</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. GoodLeap TPO -->
+                <div class="lender-card">
+                    <div class="lender-header goodleap">
+                        <div class="lender-name">GoodLeap TPO</div>
+                        <div class="lender-type">Lease / PPA</div>
+                    </div>
+                    <div class="lender-body">
+                        <div class="info-row"><div class="info-label">📍 Markets</div><div class="info-value">Maryland, New Jersey <span style="color:#ef4444;">(NOT Florida)</span></div></div>
+                        <div class="info-row"><div class="info-label">💳 Credit Score</div><div class="info-value">680 FICO recommended</div></div>
+                        <div class="info-row"><div class="info-label">👥 Co-signer Rules</div><div class="info-value">Under 600 → tied to property; 600+ → anyone</div></div>
+                        <div class="info-row"><div class="info-label">📞 Support</div><div class="info-value"><a href="tel:8445626725" style="color:#6366f1;">844-562-6725</a></div></div>
+                        
+                        <div class="divider"></div>
+                        
+                        <!-- Equipment Specs -->
+                        <div class="spec-section">
+                            <div class="spec-label">Module</div>
+                            <div class="spec-value">APTOS 410W</div>
+                        </div>
+                        <div class="spec-section">
+                            <div class="spec-label">Microinverter</div>
+                            <div class="spec-value">IQ8HC Microinverter</div>
+                        </div>
+                        <div class="spec-section">
+                            <div class="spec-label">Battery Options</div>
+                            <div>
+                                <span class="battery-pill">Enphase IQ5P</span>
+                                <span class="battery-pill">Tesla Powerwall 3</span>
+                            </div>
+                        </div>
+                        
+                        <div class="download-group">
+                            <a href="https://drive.google.com/uc?export=download&id=1arvsS3hg7OTZh24LVEcEn7bpqPc3L-vs" class="btn-download btn-cheat-sheet" target="_blank">📗 Cheat Sheet</a>
+                            <a href="https://drive.google.com/uc?export=download&id=1zilcBGysRw33n-R-Vtf0d-SC4j1Jd4ja" class="btn-download" target="_blank">📄 Panel Spec</a>
+                            <a href="https://drive.google.com/uc?export=download&id=1UkjD8dsCMhuQxZvsDJfCS_79F30oiTEy" class="btn-download" target="_blank">🔋 IQ5P Spec</a>
+                            <a href="https://drive.google.com/uc?export=download&id=1IczXYtuqYXoMFlCwcQaZF43DW2RnGz7k" class="btn-download" target="_blank">🔋 PW3 Spec</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. GoodLeap Loan -->
+                <div class="lender-card">
+                    <div class="lender-header goodleap-loan">
+                        <div class="lender-name">GoodLeap Loan</div>
+                        <div class="lender-type">Loan / Cash</div>
+                    </div>
+                    <div class="lender-body">
+                        <div class="info-row"><div class="info-label">📍 Markets</div><div class="info-value">All Active Markets</div></div>
+                        <div class="info-row"><div class="info-label">💳 Credit Score</div><div class="info-value">Varies by program</div></div>
+                        <div class="info-row"><div class="info-label">📞 Support</div><div class="info-value"><a href="tel:8445626725" style="color:#6366f1;">844-562-6725</a></div></div>
+                        
+                        <div class="divider"></div>
+                        
+                        <!-- Equipment Specs -->
+                        <div class="spec-section">
+                            <div class="spec-label">Module</div>
+                            <div class="spec-value">Longi 410W</div>
+                        </div>
+                        <div class="spec-section">
+                            <div class="spec-label">Microinverter</div>
+                            <div class="spec-value">IQ8MC-72-M-US</div>
+                        </div>
+                        <div class="spec-section">
+                            <div class="spec-label">Battery Options</div>
+                            <div>
+                                <span class="battery-pill">Franklin aPower2</span>
+                                <span class="battery-pill">Enphase IQ5P</span>
+                                <span class="battery-pill">Tesla Powerwall 3</span>
+                            </div>
+                        </div>
+                        
+                        <div class="download-group">
+                            <a href="https://drive.google.com/uc?export=download&id=1kxt70ZcHf6dm0T8H-6BP46TmRpe6WKLv" class="btn-download" target="_blank">📄 Panel Spec</a>
+                            <a href="https://drive.google.com/uc?export=download&id=1z0M1ulj8IUCGAkNV0tXyZPxl9PJVsN2o" class="btn-download" target="_blank">🔋 Franklin Spec</a>
+                            <a href="https://drive.google.com/uc?export=download&id=1UkjD8dsCMhuQxZvsDJfCS_79F30oiTEy" class="btn-download" target="_blank">🔋 IQ5P Spec</a>
+                            <a href="https://drive.google.com/uc?export=download&id=1IczXYtuqYXoMFlCwcQaZF43DW2RnGz7k" class="btn-download" target="_blank">🔋 PW3 Spec</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Skylight Lending -->
+                <div class="lender-card">
+                    <div class="lender-header skylight">
+                        <div class="lender-name">Skylight Lending</div>
+                        <div class="lender-type">Standard Lease</div>
+                    </div>
+                    <div class="lender-body">
+                        <div class="info-row"><div class="info-label">📍 Markets</div><div class="info-value">Florida, New Jersey <span style="color:#ef4444;">(NOT Maryland)</span></div></div>
+                        <div class="info-row"><div class="info-label">💳 Credit Score</div><div class="info-value">Min 670 FICO, $50k income</div></div>
+                        <div class="info-row"><div class="info-label">📊 Max Offset</div><div class="info-value">110%</div></div>
+                        <div class="info-row"><div class="info-label">📞 Support</div><div class="info-value"><a href="tel:8664716595" style="color:#6366f1;">866-471-6595</a></div></div>
+                        
+                        <div class="divider"></div>
+                        
+                        <!-- Equipment Specs -->
+                        <div class="spec-section">
+                            <div class="spec-label">Module</div>
+                            <div class="spec-value">SIRIUS 450W</div>
+                        </div>
+                        <div class="spec-section">
+                            <div class="spec-label">Microinverter</div>
+                            <div class="spec-value">IQ8HC Microinverter</div>
+                        </div>
+                        <div class="spec-section">
+                            <div class="spec-label">Battery Options</div>
+                            <div>
+                                <span class="battery-pill">Enphase IQ5P</span>
+                                <span class="battery-pill">Tesla Powerwall 3</span>
+                            </div>
+                        </div>
+                        
+                        <div class="download-group">
+                            <a href="https://drive.google.com/uc?export=download&id=197wbskO-NG0QToX0IqKQR55kTMH_JMLU" class="btn-download btn-cheat-sheet" target="_blank">📕 Cheat Sheet</a>
+                            <a href="https://drive.google.com/uc?export=download&id=1qd7mQlLXnWfL2SIzzP3fe3iBcmITYgKH" class="btn-download" target="_blank">📄 Panel Spec</a>
+                            <a href="https://drive.google.com/uc?export=download&id=1UkjD8dsCMhuQxZvsDJfCS_79F30oiTEy" class="btn-download" target="_blank">🔋 IQ5P Spec</a>
+                            <a href="https://drive.google.com/uc?export=download&id=1IczXYtuqYXoMFlCwcQaZF43DW2RnGz7k" class="btn-download" target="_blank">🔋 PW3 Spec</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Loans & Cash -->
+                <div class="lender-card">
+                    <div class="lender-header loans">
+                        <div class="lender-name">Loans & Cash</div>
+                        <div class="lender-type">Traditional Financing</div>
+                    </div>
+                    <div class="lender-body">
+                        <div class="info-row"><div class="info-label">📍 Markets</div><div class="info-value">All Markets</div></div>
+                        <div class="info-row"><div class="info-label">💡 Best For</div><div class="info-value">Maximum equipment flexibility</div></div>
+                        
+                        <div class="divider"></div>
+                        
+                        <!-- Equipment Specs -->
+                        <div class="spec-section">
+                            <div class="spec-label">Module</div>
+                            <div class="spec-value">Longi 410W</div>
+                        </div>
+                        <div class="spec-section">
+                            <div class="spec-label">Microinverter</div>
+                            <div class="spec-value">IQ8MC-72-M-US</div>
+                        </div>
+                        <div class="spec-section">
+                            <div class="spec-label">Battery Options</div>
+                            <div>
+                                <span class="battery-pill">Franklin aPower2</span>
+                                <span class="battery-pill">Enphase IQ5P</span>
+                                <span class="battery-pill">Tesla Powerwall 3</span>
+                            </div>
+                        </div>
+                        
+                        <div class="download-group">
+                            <a href="https://drive.google.com/uc?export=download&id=1kxt70ZcHf6dm0T8H-6BP46TmRpe6WKLv" class="btn-download" target="_blank">📄 Panel Spec</a>
+                            <a href="https://drive.google.com/uc?export=download&id=1z0M1ulj8IUCGAkNV0tXyZPxl9PJVsN2o" class="btn-download" target="_blank">🔋 Franklin Spec</a>
+                            <a href="https://drive.google.com/uc?export=download&id=1UkjD8dsCMhuQxZvsDJfCS_79F30oiTEy" class="btn-download" target="_blank">🔋 IQ5P Spec</a>
+                            <a href="https://drive.google.com/uc?export=download&id=1IczXYtuqYXoMFlCwcQaZF43DW2RnGz7k" class="btn-download" target="_blank">🔋 PW3 Spec</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Table -->
+        <div class="comparison-section">
+            <h2 class="comparison-title">Quick Comparison</h2>
+            <div style="overflow-x: auto;">
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Feature</th><th>LightReach</th><th>GoodLeap TPO</th><th>GoodLeap Loan</th><th>Skylight</th><th>Loans/Cash</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Florida</td><td class="check">✓</td><td class="close">✗</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+                        <tr><td>Maryland</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="close">✗</td><td class="check">✓</td></tr>
+                        <tr><td>New Jersey</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+                        <tr><td>Min Credit Score</td><td class="check">680</td><td class="check">680</td><td class="check">Varies</td><td class="check">670</td><td class="check">Varies</td></tr>
+                        <tr><td>Batteries Available</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <iframe src="components/footer.html" class="footer-iframe" id="footerIframe" scrolling="no"></iframe>
+
+    <div class="chat-widget-container">
+        <iframe 
+            id="chatbotIframe"
+            src="components/chatbot.html"
+            style="position: fixed; bottom: 16px; right: 16px; width: 80px; height: 80px; border: none; background: transparent; z-index: 9999; overflow: visible;">
+        </iframe>
+    </div>
+
+    <script>
+        // Handle header and footer height adjustments
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'headerHeight') {
+                const headerIframe = document.getElementById('headerIframe');
+                if (headerIframe) {
+                    headerIframe.style.height = event.data.height + 'px';
+                }
+            }
+            
+            if (event.data.type === 'footerHeight') {
+                const footerIframe = document.getElementById('footerIframe');
+                if (footerIframe) {
+                    footerIframe.style.height = event.data.height + 'px';
+                }
+            }
+        });
+        
+        // Handle chatbot iframe resizing
+        window.addEventListener('message', function(event) {
+            const iframe = document.getElementById('chatbotIframe');
+
+            if (!iframe || !event.data || !event.data.type) return;
+
+            if (event.data.type === 'chatbot-open') {
+                iframe.style.width = '430px';
+                iframe.style.height = '620px';
+                iframe.style.top = 'auto';
+                iframe.style.bottom = '16px';
+                iframe.style.right = '16px';
+            }
+
+            if (event.data.type === 'chatbot-closed') {
+                iframe.style.width = '80px';
+                iframe.style.height = '80px';
+                iframe.style.top = 'auto';
+                iframe.style.bottom = '16px';
+                iframe.style.right = '16px';
+            }
+        });
+        
+        // Handle orientation change for chatbot iframe
+        window.addEventListener('orientationchange', function() {
+            setTimeout(function() {
+                const iframe = document.getElementById('chatbotIframe');
+                if (iframe) {
+                    const currentWidth = iframe.style.width;
+                    if (currentWidth === '430px') {
+                        iframe.style.width = '430px';
+                        iframe.style.height = '620px';
+                    } else if (currentWidth === '80px') {
+                        iframe.style.width = '80px';
+                        iframe.style.height = '80px';
+                    }
+                }
+            }, 100);
+        });
+        
+        // Handle resize events
+        let resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function() {
+                const iframe = document.getElementById('chatbotIframe');
+                if (iframe && iframe.style.width === '430px') {
+                    iframe.style.width = '430px';
+                    iframe.style.height = '620px';
+                } else if (iframe && iframe.style.width === '80px') {
+                    iframe.style.width = '80px';
+                    iframe.style.height = '80px';
+                }
+            }, 250);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EHX Dealer Assistant</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Base Body Styles - Responsive */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
+            background: transparent;
+            min-height: 100vh;
+            overflow: visible;
+        }
+
+        /* Floating Button - BOTTOM RIGHT (original position) */
+        #chat-circle {
+            position: fixed;
+            bottom: max(16px, 3vh);
+            right: max(16px, 3vw);
+            width: clamp(50px, 12vw, 60px);
+            height: clamp(50px, 12vw, 60px);
+            background-color: #ffffff;
+            color: #6366f1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            font-size: clamp(24px, 6vw, 28px);
+            transition: all 0.2s ease;
+            border: 1px solid #e5e7eb;
+        }
+        #chat-circle:hover {
+            background-color: #f9fafb;
+            transform: scale(1.05);
+        }
+        #chat-circle:active {
+            transform: scale(0.95);
+        }
+
+        /* Chat Window - BOTTOM RIGHT */
+        .chat-window {
+            position: fixed;
+            bottom: max(16px, 2vh);
+            right: max(16px, 2vw);
+            width: min(420px, calc(100% - 32px));
+            height: min(550px, calc(100vh - 100px));
+            max-width: 400px;
+            background: white;
+            border-radius: clamp(16px, 5vw, 24px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            z-index: 1001;
+            overflow: hidden;
+        }
+
+        /* Header - Responsive */
+        .chat-header {
+            background: white;
+            padding: clamp(12px, 4vw, 16px) clamp(16px, 4vw, 20px);
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .header-title span:first-child {
+            font-size: clamp(20px, 5vw, 24px);
+        }
+        .header-title span:last-child {
+            font-weight: 600;
+            font-size: clamp(14px, 4vw, 18px);
+            color: #1f2937;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        #chat-close {
+            cursor: pointer;
+            font-size: 20px;
+            color: #9ca3af;
+            transition: color 0.2s;
+            padding: 4px;
+            line-height: 1;
+        }
+        #end-chat-btn {
+            background: none;
+            border: none;
+            color: #ef4444;
+            font-size: clamp(11px, 3.5vw, 12px);
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 16px;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+        #end-chat-btn:active {
+            background: #fef2f2;
+        }
+
+        /* Chat Body - Responsive */
+        .chat-body {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: clamp(12px, 4vw, 20px);
+            background: #f9fafb;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Messages - Responsive */
+        .message.bot {
+            align-self: flex-start;
+            background: white;
+            color: #1f2937;
+            padding: clamp(10px, 3vw, 12px) clamp(12px, 4vw, 16px);
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            max-width: 90%;
+            font-size: clamp(13px, 3.5vw, 14px);
+            line-height: 1.5;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+            white-space: pre-line;
+            word-wrap: break-word;
+        }
+        .message.user {
+            align-self: flex-end;
+            background: #6366f1;
+            color: white;
+            padding: clamp(10px, 3vw, 12px) clamp(12px, 4vw, 16px);
+            border-radius: 18px;
+            border-bottom-right-radius: 4px;
+            max-width: 85%;
+            font-size: clamp(13px, 3.5vw, 14px);
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+        .message.closing {
+            align-self: flex-start;
+            background: #dcfce7;
+            color: #166534;
+            padding: 10px 14px;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            font-size: 13px;
+            border-left: 3px solid #22c55e;
+        }
+        .message.confirmation {
+            align-self: flex-start;
+            background: #fef3c7;
+            color: #92400e;
+            padding: 10px 14px;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            font-size: 13px;
+            border-left: 3px solid #f59e0b;
+        }
+        .message.agent-connect {
+            align-self: flex-start;
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 10px 14px;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            font-size: 13px;
+            border-left: 3px solid #6366f1;
+        }
+
+        /* Permit Card Styles */
+        .permit-card {
+            background: white;
+            border-radius: 12px;
+            padding: clamp(10px, 3vw, 12px);
+            margin: 8px 0;
+            border: 1px solid #e5e7eb;
+        }
+        .permit-state {
+            font-weight: 700;
+            font-size: clamp(13px, 3.5vw, 15px);
+            margin-bottom: 8px;
+            color: #1f2937;
+            border-left: 3px solid #10b981;
+            padding-left: 10px;
+        }
+        .permit-timeline {
+            font-size: clamp(12px, 3.5vw, 13px);
+            color: #374151;
+            margin-bottom: 6px;
+        }
+        .permit-note {
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        /* Document Card Styles - Responsive */
+        .document-card {
+            background: white;
+            border-radius: 12px;
+            padding: clamp(10px, 3vw, 12px) clamp(12px, 4vw, 14px);
+            margin: 5px 0;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: clamp(8px, 3vw, 12px);
+            transition: all 0.2s;
+            flex-wrap: wrap;
+        }
+        .document-icon {
+            font-size: clamp(24px, 6vw, 28px);
+        }
+        .document-info {
+            flex: 1;
+            min-width: 120px;
+        }
+        .document-title {
+            font-weight: 600;
+            font-size: clamp(13px, 3.5vw, 14px);
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+        .document-desc {
+            font-size: clamp(10px, 3vw, 11px);
+            color: #6b7280;
+        }
+        .document-link {
+            background: #6366f1;
+            color: white;
+            text-decoration: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: clamp(11px, 3vw, 12px);
+            font-weight: 500;
+            transition: background 0.2s;
+            display: inline-block;
+            white-space: nowrap;
+        }
+        .document-link:active {
+            background: #4f46e5;
+            transform: scale(0.97);
+        }
+
+        /* Adder Category Card - Responsive */
+        .adder-category {
+            background: white;
+            border-radius: 12px;
+            padding: clamp(10px, 3vw, 12px);
+            margin: 8px 0;
+            border: 1px solid #e5e7eb;
+        }
+        .adder-category-title {
+            font-weight: 700;
+            font-size: clamp(13px, 3.5vw, 14px);
+            margin-bottom: 10px;
+            color: #1f2937;
+            border-left: 3px solid #6366f1;
+            padding-left: 10px;
+        }
+        .adder-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: clamp(11px, 3vw, 12px);
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .adder-row:last-child {
+            border-bottom: none;
+        }
+        .adder-name {
+            font-weight: 500;
+            color: #374151;
+        }
+        .adder-price {
+            color: #6366f1;
+            font-weight: 600;
+        }
+        .adder-note {
+            font-size: 10px;
+            color: #6b7280;
+            margin-top: 8px;
+            padding-top: 6px;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+        }
+
+        /* Utility Card Styles - Responsive */
+        .utility-card {
+            background: white;
+            border-radius: 12px;
+            padding: clamp(10px, 3vw, 12px);
+            margin: 8px 0;
+            border: 1px solid #e5e7eb;
+        }
+        .utility-state {
+            font-weight: 700;
+            font-size: clamp(13px, 3.5vw, 15px);
+            margin-bottom: 10px;
+            color: #1f2937;
+            border-left: 3px solid #6366f1;
+            padding-left: 10px;
+        }
+        .utility-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 5px;
+        }
+        .utility-tag {
+            background: #f3f4f6;
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: clamp(10px, 3vw, 11px);
+            color: #374151;
+        }
+
+        /* Battery Card - Responsive */
+        .battery-card {
+            background: white;
+            border-radius: 14px;
+            padding: clamp(10px, 3vw, 12px);
+            margin-top: 5px;
+            border: 1px solid #e5e7eb;
+        }
+        .battery-lender {
+            font-weight: 700;
+            font-size: clamp(12px, 3.5vw, 14px);
+            margin-bottom: 8px;
+            color: #1f2937;
+            border-left: 3px solid #6366f1;
+            padding-left: 10px;
+        }
+        .battery-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 5px;
+        }
+        .battery-item {
+            background: #f3f4f6;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: clamp(10px, 3vw, 12px);
+            color: #374151;
+        }
+
+        /* Quick Reply Buttons - Touch Friendly */
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+        .quick-btn {
+            background: white;
+            border: 1px solid #e5e7eb;
+            color: #4f46e5;
+            padding: clamp(8px, 3vw, 10px) clamp(12px, 4vw, 16px);
+            border-radius: 30px;
+            font-size: clamp(11px, 3.5vw, 13px);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            min-height: 40px;
+            white-space: nowrap;
+        }
+        .quick-btn:active {
+            transform: scale(0.97);
+            background: #eef2ff;
+        }
+
+        /* Footer Input - Touch Friendly */
+        .chat-footer {
+            display: flex;
+            padding: clamp(10px, 3vw, 12px) clamp(12px, 4vw, 16px);
+            border-top: 1px solid #e5e7eb;
+            background: white;
+            gap: 8px;
+            align-items: center;
+        }
+        #chat-input {
+            flex-grow: 1;
+            padding: clamp(10px, 3vw, 12px) clamp(12px, 4vw, 14px);
+            border: 1px solid #e5e7eb;
+            border-radius: 30px;
+            outline: none;
+            font-size: clamp(14px, 4vw, 16px);
+            font-family: inherit;
+            transition: border 0.2s;
+            min-height: 44px;
+        }
+        #chat-input:focus {
+            border-color: #6366f1;
+        }
+        #send-btn {
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: clamp(8px, 3vw, 10px) clamp(16px, 5vw, 20px);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: clamp(13px, 3.5vw, 14px);
+            transition: background 0.2s;
+            min-height: 44px;
+            white-space: nowrap;
+        }
+        #send-btn:active {
+            transform: scale(0.97);
+        }
+        #send-btn:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            align-self: flex-start;
+            background: white;
+            padding: 10px 16px;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            gap: 4px;
+        }
+        .typing-indicator span {
+            width: 6px;
+            height: 6px;
+            background: #9ca3af;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        .typing-indicator span:nth-child(1) { animation-delay: 0s; }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-6px); opacity: 1; }
+        }
+
+        /* Powered by */
+        .powered-by {
+            text-align: center;
+            padding: 8px;
+            font-size: 10px;
+            color: #9ca3af;
+            background: white;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        /* Tablet Specific Adjustments */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .chat-window {
+                width: 400px;
+                height: 600px;
+            }
+            .quick-btn {
+                white-space: normal;
+                text-align: center;
+            }
+        }
+
+        /* Small Mobile Adjustments */
+        @media (max-width: 480px) {
+            .chat-window {
+                width: calc(100% - 20px);
+                right: 10px;
+                bottom: 10px;
+                height: calc(100vh - 80px);
+                border-radius: 20px;
+            }
+            .quick-replies {
+                gap: 6px;
+            }
+            .quick-btn {
+                white-space: normal;
+                text-align: center;
+                flex: 1 0 auto;
+                min-width: calc(50% - 6px);
+            }
+            .document-card {
+                flex-wrap: wrap;
+            }
+            .document-link {
+                white-space: normal;
+                text-align: center;
+                width: 100%;
+            }
+            .document-info {
+                min-width: 100%;
+            }
+            .adder-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+            .header-title span:last-child {
+                font-size: 16px;
+            }
+        }
+
+        /* Desktop Large Screens */
+        @media (min-width: 1200px) {
+            .chat-window {
+                width: 420px;
+                height: 650px;
+            }
+                    /* Chatbot mobile responsiveness */
+        @media (max-width: 768px) {
+            .chat-window {
+                width: calc(100% - 20px);
+                right: 10px;
+                bottom: 10px;
+                height: calc(100vh - 100px);
+                border-radius: 16px;
+            }
+            .quick-replies {
+                gap: 6px;
+            }
+            .quick-btn {
+                font-size: 11px;
+                padding: 8px 12px;
+                white-space: normal;
+                text-align: center;
+            }
+            .chat-header {
+                padding: 12px 16px;
+            }
+            .header-title span:last-child {
+                font-size: 14px;
+            }
+            .chat-body {
+                padding: 12px;
+            }
+            .message.bot, .message.user {
+                font-size: 13px;
+                padding: 8px 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .quick-btn {
+                flex: 1 0 auto;
+                min-width: calc(50% - 6px);
+                font-size: 10px;
+                padding: 6px 10px;
+            }
+            .document-card {
+                flex-wrap: wrap;
+            }
+            .document-link {
+                width: 100%;
+                text-align: center;
+            }
+            .document-info {
+                min-width: 100%;
+            }
+            .adder-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+        }
+        }
+    </style>
+</head>
+<body>
+
+<div id="chat-circle">💬</div>
+
+<div class="chat-window" id="chat-window">
+    <div class="chat-header">
+        <div class="header-title">
+            <span>🔋</span>
+            <span>EHX Dealer Assistant</span>
+        </div>
+        <div class="header-actions">
+            <button id="end-chat-btn" title="End current chat and start fresh">⏹️ End Chat</button>
+            <span id="chat-close">✕</span>
+        </div>
+    </div>
+    <div class="chat-body" id="chat-body"></div>
+    <div class="chat-footer">
+        <input type="text" id="chat-input" placeholder="Ask me anything...">
+        <button id="send-btn">Send</button>
+    </div>
+    <div class="powered-by">
+        EHX Dealer Assistant | Sales Support: (727) 266-0683
+    </div>
+</div>
+
+<!-- Tawk.to Live Chat Script - Replace YOUR_SITE_ID with your actual Tawk.to widget ID -->
+<!--
+  TO SET UP LIVE CHAT:
+  1. Go to https://www.tawk.to/ and sign up (free)
+  2. Get your widget ID (looks like: https://embed.tawk.to/YOUR_SITE_ID/default)
+  3. Replace the "YOUR_SITE_ID" in the src URL below
+  4. Uncomment the script tag
+-->
+<!--
+<script>
+  var Tawk_API = Tawk_API || {};
+  Tawk_API.onLoad = function() {
+    console.log('Tawk.to live chat loaded');
+  };
+</script>
+<script src="https://embed.tawk.to/YOUR_SITE_ID/default" async></script>
+-->
+
+<script>
+    // DOM Elements
+    const circle = document.getElementById('chat-circle');
+    const chatWindow = document.getElementById('chat-window');
+    const closeBtn = document.getElementById('chat-close');
+    const endChatBtn = document.getElementById('end-chat-btn');
+    const sendBtn = document.getElementById('send-btn');
+    const chatInput = document.getElementById('chat-input');
+    const chatBody = document.getElementById('chat-body');
+
+    // State
+    let isChatActive = true;
+    let pendingEndConfirmation = false;
+
+    // ========== Tawk.to Live Chat Integration ==========
+    function connectToLiveAgent() {
+        // Check if Tawk.to is loaded
+        if (typeof Tawk_API !== 'undefined' && Tawk_API) {
+            // Show connecting message
+            const connectMsg = document.createElement('div');
+            connectMsg.classList.add('message', 'agent-connect');
+            connectMsg.innerHTML = "🔄 Connecting you to a live support agent...";
+            chatBody.appendChild(connectMsg);
+            chatBody.scrollTop = chatBody.scrollHeight;
+            
+            // Minimize the EHX chat window slightly and open Tawk.to
+            setTimeout(() => {
+                // Open Tawk.to chat widget
+                if (Tawk_API.maximize) {
+                    Tawk_API.maximize();
+                }
+                if (Tawk_API.toggle) {
+                    Tawk_API.toggle();
+                }
+                
+                // Add confirmation message
+                const agentMsg = document.createElement('div');
+                agentMsg.classList.add('message', 'agent-connect');
+                agentMsg.innerHTML = "💬 Live chat window opened! A support agent will be with you shortly. You can continue typing there.";
+                chatBody.appendChild(agentMsg);
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }, 1000);
+        } else {
+            // Fallback if Tawk.to not configured
+            addMessage("📞 Live chat is not configured yet. Please contact our sales support directly:\n\n• Phone: (727) 266-0683\n• Email: salessupport@energyharborx.com", 'bot');
+        }
+    }
+
+    // Function to notify parent about chat state (for iframe sizing)
+    function notifyParent(state) {
+        if (window.parent && window.parent !== window) {
+            window.parent.postMessage({ type: state }, '*');
+        }
+    }
+
+    // ========== PERMIT TIMELINES BY STATE ==========
+    const permitTimelines = {
+        florida: {
+            name: "Florida",
+            timeline: "1 week",
+            note: "Fully permitted within approximately 1 week."
+        },
+        maryland: {
+            name: "Maryland",
+            timeline: "2 to 4 weeks",
+            note: "Timeline varies depending on jurisdiction."
+        },
+        new_jersey: {
+            name: "New Jersey",
+            timeline: "2 to 4 weeks",
+            note: "Timeline varies depending on jurisdiction."
+        },
+        georgia: {
+            name: "Georgia",
+            timeline: "2 to 4 weeks",
+            note: "Timeline varies depending on jurisdiction. Coming soon market."
+        }
+    };
+
+    function showPermitTimeline(state) {
+        const stateKey = state.toLowerCase();
+        let permitData = null;
+        
+        if (stateKey.includes('florida') || stateKey === 'fl') {
+            permitData = permitTimelines.florida;
+        } else if (stateKey.includes('maryland') || stateKey === 'md') {
+            permitData = permitTimelines.maryland;
+        } else if (stateKey.includes('new jersey') || stateKey === 'nj' || stateKey.includes('jersey')) {
+            permitData = permitTimelines.new_jersey;
+        } else if (stateKey.includes('georgia') || stateKey === 'ga') {
+            permitData = permitTimelines.georgia;
+        }
+        
+        if (permitData) {
+            const container = document.createElement('div');
+            container.classList.add('message', 'bot');
+            
+            let permitHtml = `<div class="permit-card">
+                <div class="permit-state">📍 ${permitData.name} - Permit Timeline</div>
+                <div class="permit-timeline">⏱️ Estimated Timeline: ${permitData.timeline}</div>
+                <div class="permit-note">📋 ${permitData.note}</div>
+            </div>`;
+            
+            container.innerHTML = permitHtml;
+            chatBody.appendChild(container);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        } else {
+            addMessage("📍 I have permit timeline information for Florida, Maryland, New Jersey, and Georgia. Which state would you like to know about?", 'bot');
+        }
+    }
+
+    function showAllPermitTimelines() {
+        const container = document.createElement('div');
+        container.classList.add('message', 'bot');
+        
+        let allPermitsHtml = `<div style="font-weight: 600; margin-bottom: 12px;">📋 Permit Timelines by State</div>`;
+        
+        for (const [key, state] of Object.entries(permitTimelines)) {
+            allPermitsHtml += `<div class="permit-card">
+                <div class="permit-state">📍 ${state.name}</div>
+                <div class="permit-timeline">⏱️ Estimated Timeline: ${state.timeline}</div>
+                <div class="permit-note">📋 ${state.note}</div>
+            </div>`;
+        }
+        
+        allPermitsHtml += `<div class="adder-note" style="margin-top: 8px;">⚡ Timelines are estimates and may vary based on local jurisdiction and current workload.</div>`;
+        
+        container.innerHTML = allPermitsHtml;
+        chatBody.appendChild(container);
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    // ========== DOCUMENTS LIBRARY ==========
+    const documents = {
+        welcome_script: {
+            title: "📄 Welcome Call Script",
+            description: "Complete script for customer welcome calls",
+            url: "https://drive.google.com/uc?export=download&id=17YP9Ru5PdHckVKG0z3lBKcYmypPJ2rD8",
+            keywords: ["welcome call", "call script", "welcome script", "customer call", "introduction call"]
+        },
+        goodleap_cheat_sheet: {
+            title: "🏦 GoodLeap TPO Cheat Sheet",
+            description: "Credit requirements, co-signer rules, and NTP guidelines for GoodLeap",
+            url: "https://drive.google.com/uc?export=download&id=1arvsS3hg7OTZh24LVEcEn7bpqPc3L-vs",
+            keywords: ["goodleap", "good leap", "goodleap cheat sheet", "goodleap guidelines", "tpo"]
+        },
+        lightreach_cheat_sheet: {
+            title: "🏦 LightReach Cheat Sheet",
+            description: "Credit requirements, property eligibility, and roof guidelines for LightReach",
+            url: "https://drive.google.com/uc?export=download&id=1cvUqOKDg2f1le5dnGCtA2x58BKbXz6Ha",
+            keywords: ["lightreach", "palmetto", "lightreach cheat sheet", "lightreach guidelines", "palmetto guidelines"]
+        },
+        skylight_cheat_sheet: {
+            title: "🏦 Skylight Lending Cheat Sheet",
+            description: "Qualifications, requirements, and guidelines for Skylight Lending",
+            url: "https://drive.google.com/uc?export=download&id=197wbskO-NG0QToX0IqKQR55kTMH_JMLU",
+            keywords: ["skylight", "skylight lending", "skylight cheat sheet", "skylight guidelines"]
+        },
+        adder_guide: {
+            title: "➕ EHX Adder Sheet",
+            description: "Complete adder pricing for batteries, installation, roofing, and more (Updated March 2026)",
+            url: "https://drive.google.com/uc?export=download&id=18-qoBv-mj8vcZQJI8i5l-Mxwiph_Wy5A",
+            keywords: ["adder", "adders", "adder guide", "battery adder", "adder pricing", "cost adder", "battery price", "battery cost", "adder sheet", "roofing", "insulation", "heat pump"]
+        }
+    };
+
+    // ========== COMPLETE ADDER PRICING ==========
+    const adders = {
+        battery_backup: {
+            name: "🔋 Battery Backup",
+            items: [
+                { name: "Enphase IQ 5P", price: "$8,500/unit" },
+                { name: "Enphase IQ 5P additional stack", price: "$5,000/unit" },
+                { name: "Franklin Battery 15 KW", price: "$16,250/unit" },
+                { name: "HomeGrid Stack 9.6 KW", price: "$9,500/unit" },
+                { name: "HomeGrid 3.8 KW additional stack", price: "$3,000/unit" },
+                { name: "Tesla Powerwall 3 13.5KW", price: "$14,000/unit" },
+                { name: "Transfer Switch", price: "$2,800.00" }
+            ]
+        },
+        ac_heat_pumps: {
+            name: "❄️ A/C Heat Pumps (18+ SEER)",
+            items: [
+                { name: "2 Ton", price: "$9,000.00" },
+                { name: "3 Ton", price: "$10,500.00" },
+                { name: "4 Ton", price: "$12,000.00" },
+                { name: "5 Ton", price: "$12,500.00" }
+            ]
+        },
+        energy_efficiency: {
+            name: "💡 Energy Efficiency",
+            items: [
+                { name: "Hybrid Hot Water Heater", price: "$3,800.00" },
+                { name: "Panel Cleaning Service", price: "$350.00" },
+                { name: "Puronics Water Filtration", price: "$2,000.00" },
+                { name: "Solar Attic Fan", price: "$1,400.00" },
+                { name: "Variable Speed Pool Pump", price: "$3,500.00" },
+                { name: "Tankless Hot Water Heater", price: "$3,800.00" }
+            ]
+        },
+        installation: {
+            name: "🛠️ Installation Adders",
+            items: [
+                { name: "Concrete Tile Roof Mount", price: "$0.25/W" },
+                { name: "Ground Mount", price: "$0.70/W" },
+                { name: "Metal Roof Mount", price: "$0.20/W" },
+                { name: "Remove And Reinstall Solar", price: "$225/panel" },
+                { name: "Small System (< 4.5kW)", price: "$1,000.00" },
+                { name: "Steep Roof", price: "$0.10/W" },
+                { name: "Trenching", price: "$12.00/ft" },
+                { name: "Trenching (Concrete)", price: "$25.00/ft" },
+                { name: "3 Story Roof", price: "$1,500.00" },
+                { name: "Main Panel Upgrade", price: "$3,500.00" },
+                { name: "Tile Roof Mount", price: "$0.25/W" },
+                { name: "Tree Trimming", price: "Requires Estimate" },
+                { name: "Expedited Install", price: "$1,000.00" }
+            ]
+        },
+        office_adders: {
+            name: "📋 Office Adders",
+            items: [
+                { name: "Admin Fee (Office / Every project)", price: "$600.00" },
+                { name: "Travel Fee (Over 200 Miles from Ops HQ)", price: "$500.00" }
+            ]
+        },
+        inverter: {
+            name: "⚡ Inverter",
+            items: [
+                { name: "Sol Ark", price: "$6,500.00" }
+            ]
+        },
+        domestic_content: {
+            name: "📦 Domestic Content",
+            items: [
+                { name: "Enphase IQ8HC", price: "$0.10/W" },
+                { name: "Q Cell 430W/AC", price: "$0.20/W" }
+            ]
+        },
+        roofing: {
+            name: "🏠 Roofing",
+            items: [
+                { name: "Re-Roof Cement Tile", price: "$1,900/square" },
+                { name: "Re-Roof Ceramic Tile", price: "$1,300/square" },
+                { name: "Re-Roof Metal Exposed Fastener", price: "$975/square" },
+                { name: "Re-Roof Metal Standing Seam", price: "$1,800/square" },
+                { name: "Re-Roof Shingles", price: "$510.00/square" }
+            ]
+        },
+        insulation: {
+            name: "🏠 Insulation",
+            items: [
+                { name: "Arctic Blanket", price: "$3.99/ft" },
+                { name: "R 38 Insulation", price: "$1.50/sq ft" },
+                { name: "Radiant Barrier", price: "$1.10/sq ft" },
+                { name: "Spray Foam Insulation", price: "$3.50/sq ft" }
+            ]
+        }
+    };
+
+    // ========== UTILITIES BY STATE ==========
+    const utilities = {
+        florida: {
+            name: "Florida",
+            count: 14,
+            utilities: [
+                "Duke Energy", "Florida Power & Light (FPL)", "Tampa Electric (TECO)",
+                "Orlando Utilities Commission (OUC)", "Kissimmee Utility Authority (KUA)",
+                "Lee County Electric Cooperative (LCEC)", "Peace River Electric Cooperative (PREC)",
+                "Sumter Electric Cooperative (SECO)", "Withlacoochee River Electric Cooperative (WREC)",
+                "Lakeland Electric", "City of Tallahassee", "Gainesville Regional Utilities (GRU)",
+                "City of Winter Park Utilities", "Jacksonville Electric Authority (JEA)"
+            ]
+        },
+        maryland: {
+            name: "Maryland",
+            count: 14,
+            utilities: [
+                "Duke Energy", "Florida Power & Light (FPL)", "Tampa Electric (TECO)",
+                "Orlando Utilities Commission (OUC)", "Kissimmee Utility Authority (KUA)",
+                "Lee County Electric Cooperative (LCEC)", "Peace River Electric Cooperative (PREC)",
+                "Sumter Electric Cooperative (SECO)", "Withlacoochee River Electric Cooperative (WREC)",
+                "Lakeland Electric", "City of Tallahassee", "Gainesville Regional Utilities (GRU)",
+                "City of Winter Park Utilities", "Jacksonville Electric Authority (JEA)"
+            ]
+        },
+        new_jersey: {
+            name: "New Jersey",
+            count: 4,
+            utilities: [
+                "PSE&G", "Atlantic City Electric (ACE)", 
+                "Jersey Central Power & Light (JCP&L)", "Rockland Electric Co (RECO)"
+            ]
+        }
+    };
+
+    function showCategoryAdders(categoryKey) {
+        const category = adders[categoryKey];
+        if (!category) return;
+        
+        const container = document.createElement('div');
+        container.classList.add('message', 'bot');
+        
+        let html = `<div class="adder-category">
+            <div class="adder-category-title">${category.name}</div>`;
+        
+        for (const item of category.items) {
+            html += `<div class="adder-row">
+                <span class="adder-name">${item.name}</span>
+                <span class="adder-price">${item.price}</span>
+            </div>`;
+        }
+        
+        html += `<div class="adder-note">Prices subject to change. Last updated: March 24, 2026</div></div>`;
+        container.innerHTML = html;
+        chatBody.appendChild(container);
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function showUtilitiesByState(state) {
+        const stateKey = state.toLowerCase();
+        let utilityData = null;
+        
+        if (stateKey.includes('florida') || stateKey === 'fl') {
+            utilityData = utilities.florida;
+        } else if (stateKey.includes('maryland') || stateKey === 'md') {
+            utilityData = utilities.maryland;
+        } else if (stateKey.includes('new jersey') || stateKey === 'nj' || stateKey.includes('jersey')) {
+            utilityData = utilities.new_jersey;
+        }
+        
+        if (utilityData) {
+            const container = document.createElement('div');
+            container.classList.add('message', 'bot');
+            
+            let utilitiesHtml = `<div class="utility-card">
+                <div class="utility-state">📍 ${utilityData.name} - Approved Utilities (${utilityData.count} utilities)</div>
+                <div class="utility-list">`;
+            
+            for (const util of utilityData.utilities) {
+                utilitiesHtml += `<span class="utility-tag">${util}</span>`;
+            }
+            
+            utilitiesHtml += `</div>
+                <div class="adder-note">✅ These ${utilityData.count} utilities are approved for LightReach Energy Plans in ${utilityData.name}.</div>
+            </div>`;
+            
+            container.innerHTML = utilitiesHtml;
+            chatBody.appendChild(container);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        } else {
+            addMessage("📍 Utilities are currently available for LightReach in Florida, Maryland, and New Jersey. Which state are you interested in? (Florida, Maryland, or New Jersey)", 'bot');
+        }
+    }
+
+    function showAllUtilities() {
+        const container = document.createElement('div');
+        container.classList.add('message', 'bot');
+        
+        let allUtilitiesHtml = `<div style="font-weight: 600; margin-bottom: 12px;">📍 Approved Utilities by State (LightReach)</div>`;
+        
+        for (const [key, state] of Object.entries(utilities)) {
+            allUtilitiesHtml += `<div class="utility-card">
+                <div class="utility-state">📍 ${state.name} (${state.count} utilities)</div>
+                <div class="utility-list">`;
+            
+            for (const util of state.utilities) {
+                allUtilitiesHtml += `<span class="utility-tag">${util}</span>`;
+            }
+            
+            allUtilitiesHtml += `</div></div>`;
+        }
+        
+        allUtilitiesHtml += `<div class="adder-note" style="margin-top: 8px;">⚡ These utilities are approved for LightReach Energy Plans. Florida and Maryland share the same 14 utilities.</div>`;
+        
+        container.innerHTML = allUtilitiesHtml;
+        chatBody.appendChild(container);
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function showDocumentsList() {
+        const container = document.createElement('div');
+        container.classList.add('message', 'bot');
+        
+        let htmlContent = `
+            <div style="font-weight: 600; margin-bottom: 12px;">📚 Available Documents & Resources</div>
+            <div style="margin-bottom: 8px; font-size: 13px; color: #6b7280;">Click any document below to download:</div>
+        `;
+        
+        for (const [key, doc] of Object.entries(documents)) {
+            htmlContent += `
+                <div class="document-card">
+                    <div class="document-icon">📄</div>
+                    <div class="document-info">
+                        <div class="document-title">${doc.title}</div>
+                        <div class="document-desc">${doc.description}</div>
+                    </div>
+                    <a href="${doc.url}" class="document-link" target="_blank" onclick="event.stopPropagation();">Download</a>
+                </div>
+            `;
+        }
+        
+        htmlContent += `<div class="adder-note" style="margin-top: 8px;">💡 Need a specific document? Just ask! Example: "Can I get the Adder Sheet?"</div>`;
+        
+        container.innerHTML = htmlContent;
+        chatBody.appendChild(container);
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    // Toggle chat window
+    circle.addEventListener('click', () => {
+        chatWindow.style.display = 'flex';
+        circle.style.display = 'none';
+        notifyParent('chatbot-open');
+    });
+    closeBtn.addEventListener('click', () => {
+        chatWindow.style.display = 'none';
+        circle.style.display = 'flex';
+        notifyParent('chatbot-closed');
+    });
+
+    function addMessage(text, sender, isClosing = false, isConfirmation = false) {
+        const msgDiv = document.createElement('div');
+        if (isClosing) {
+            msgDiv.classList.add('message', 'closing');
+        } else if (isConfirmation) {
+            msgDiv.classList.add('message', 'confirmation');
+        } else {
+            msgDiv.classList.add('message', sender);
+        }
+        msgDiv.innerText = text;
+        chatBody.appendChild(msgDiv);
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function showTyping() {
+        const typingDiv = document.createElement('div');
+        typingDiv.classList.add('typing-indicator');
+        typingDiv.id = 'typing-indicator';
+        typingDiv.innerHTML = '<span></span><span></span><span></span>';
+        chatBody.appendChild(typingDiv);
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function hideTyping() {
+        const el = document.getElementById('typing-indicator');
+        if (el) el.remove();
+    }
+
+    function fullResetChat() {
+        while (chatBody.firstChild) {
+            chatBody.removeChild(chatBody.firstChild);
+        }
+        
+        const welcomeMsg = document.createElement('div');
+        welcomeMsg.classList.add('message', 'bot');
+        welcomeMsg.innerText = "Hi! How can I help you today?";
+        chatBody.appendChild(welcomeMsg);
+        
+        const quickDiv = document.createElement('div');
+        quickDiv.classList.add('quick-replies');
+        quickDiv.id = 'quick-replies';
+        quickDiv.innerHTML = `
+            <button class="quick-btn" data-question="What equipment can I use?">📦 Equipment</button>
+            <button class="quick-btn" data-question="What financing options are available?">💰 Financing</button>
+            <button class="quick-btn" data-question="Show me battery adders">🔋 Battery Adders</button>
+            <button class="quick-btn" data-question="Show me installation adders">🛠️ Install Adders</button>
+            <button class="quick-btn" data-question="Show me roofing adders">🏠 Roofing</button>
+            <button class="quick-btn" data-question="Show me permit timelines">📋 Permit Times</button>
+            <button class="quick-btn" data-question="Show me utilities">⚡ Utilities</button>
+            <button class="quick-btn" data-question="Show me documents">📚 Documents</button>
+            <button class="quick-btn" data-question="Connect to live agent">💬 Chat with Agent</button>
+            <button class="quick-btn" data-question="How can I contact support?">📞 Support</button>
+        `;
+        chatBody.appendChild(quickDiv);
+        
+        document.querySelectorAll('.quick-btn').forEach(btn => {
+            btn.removeEventListener('click', quickClickHandler);
+            btn.addEventListener('click', quickClickHandler);
+        });
+        
+        isChatActive = true;
+        pendingEndConfirmation = false;
+        chatInput.disabled = false;
+        chatInput.placeholder = "Ask me anything...";
+        sendBtn.disabled = false;
+        
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function quickClickHandler(e) {
+        const question = e.currentTarget.getAttribute('data-question');
+        if (question === "Connect to live agent") {
+            connectToLiveAgent();
+        } else {
+            sendMessage(question);
+        }
+    }
+
+    function executeEndChat() {
+        if (!isChatActive) return;
+        
+        isChatActive = false;
+        pendingEndConfirmation = false;
+        
+        chatInput.disabled = true;
+        sendBtn.disabled = true;
+        
+        addMessage("✅ Thanks for using EHX Dealer Assistant! Starting a fresh conversation for you...", 'bot', true);
+        
+        setTimeout(() => {
+            fullResetChat();
+        }, 1200);
+    }
+
+    function requestEndConfirmation() {
+        pendingEndConfirmation = true;
+        addMessage("Do you have any other questions?", 'bot', false, true);
+    }
+
+    function isEndConfirmationResponse(message) {
+        const m = message.toLowerCase().trim();
+        const confirmEnd = ["no", "nope", "no thanks", "no thank you", "negative", "none", "that's all", "that is all", "all set", "i'm done", "im done", "done", "finished", "nothing else", "no more", "correct"];
+        const cancelEnd = ["yes", "yeah", "yep", "sure", "actually yes", "one more", "i have another question", "wait", "hold on"];
+        
+        if (confirmEnd.some(phrase => m.includes(phrase))) return "confirm";
+        if (cancelEnd.some(phrase => m.includes(phrase))) return "cancel";
+        return null;
+    }
+
+    function isEndOfChatIntent(message) {
+        const m = message.toLowerCase().trim();
+        if (pendingEndConfirmation) return false;
+        
+        const endPhrases = [
+            "that answers my question", "that answered my question", "my question has been answered",
+            "question answered", "all set", "i'm good", "im good", "that's all", "that is all",
+            "no more questions", "done for now", "thanks that helps", "got it thanks", "got it thank you",
+            "i have what i need", "that works", "perfect thanks", "ok thanks", "ok thank you",
+            "thanks", "thank you", "thx", "ty"
+        ];
+        return endPhrases.some(phrase => m.includes(phrase));
+    }
+
+    function getEHXResponse(question) {
+        const q = question.toLowerCase().trim();
+
+        if (q.includes('permit') || q.includes('timeline') || q.includes('permitting') || q === 'show me permit timelines') {
+            if (q.includes('florida') || q.includes('fl')) {
+                return "___SHOW_FLORIDA_PERMIT___";
+            }
+            if (q.includes('maryland') || q.includes('md')) {
+                return "___SHOW_MARYLAND_PERMIT___";
+            }
+            if (q.includes('new jersey') || q.includes('nj') || q.includes('jersey')) {
+                return "___SHOW_NEWJERSEY_PERMIT___";
+            }
+            if (q.includes('georgia') || q.includes('ga')) {
+                return "___SHOW_GEORGIA_PERMIT___";
+            }
+            return "___SHOW_ALL_PERMITS___";
+        }
+
+        if (q.includes('battery adder') || q === 'show me battery adders') return "___SHOW_BATTERY_ADDERS___";
+        if (q.includes('installation adder') || q === 'show me installation adders') return "___SHOW_INSTALLATION_ADDERS___";
+        if (q.includes('roofing adder') || q === 'show me roofing adders') return "___SHOW_ROOFING_ADDERS___";
+        if (q.includes('show me utilities')) return "___SHOW_ALL_UTILITIES___";
+        if (q.includes('show me documents')) return "___SHOW_DOCUMENTS___";
+        if (q === 'what equipment can i use') return "___SHOW_EQUIPMENT___";
+        if (q === 'what financing options are available') return "___SHOW_FINANCING___";
+        if (q === 'how can i contact support') return "___SHOW_SUPPORT___";
+
+        if (q === 'sales support' || q === 'support' || q === 'help' ||
+            q.includes('contact support') || q.includes('phone number')) {
+            return "📞 EHX Sales Support\n\n• Phone: (727) 266-0683\n• Email: salessupport@energyharborx.com\n\nFor complex deals, exceptions, manual review, or any assistance beyond the chatbot, please reach out directly.";
+        }
+
+        if (q.includes('financing') || q.includes('lender options') || q.includes('what lenders')) {
+            return "💰 Financing Options Available\n\n• Palmetto LightReach (Solar Lease)\n• GoodLeap TPO (Lease/PPA)\n• Skylight Lending (Standard Lease)\n• Loans & Cash\n\nEach has different credit requirements, equipment combos, and market availability. Which lender would you like to know more about?";
+        }
+
+        if (q.includes('equipment') || q.includes('combo') || q.includes('module') || q.includes('inverter')) {
+            return "🔧 Approved Equipment by Lender\n\n🔹 LightReach: SIRIUS 450W + IQ8HC + Enphase IQ5P / Tesla PW3 (FL, MD, NJ)\n🔹 GoodLeap: APTOS 410W + IQ8HC + Enphase IQ5P / Tesla PW3 (MD, NJ — not FL)\n🔹 Skylight: SIRIUS 450W + IQ8HC + Enphase IQ5P / Tesla PW3 (FL, NJ — not MD)\n🔹 Loans & Cash: Longi 410W + IQ8MC + Franklin aPower2 / Enphase IQ5P / Tesla PW3 (All Markets)";
+        }
+
+        if (q.includes('lightreach')) {
+            return "🔹 Palmetto LightReach\n\n📦 Equipment: SIRIUS 450W + IQ8HC\n📍 Markets: FL, MD, NJ\n💳 Credit: Min 680 FICO (soft pull)\n📊 Max Offset: 150%\n🏠 Property: Single-family homes, detached garages\n❌ Not accepted: Townhomes, manufactured homes\n📞 Support: 888-531-3327";
+        }
+
+        if (q.includes('goodleap')) {
+            return "🔹 GoodLeap TPO\n\n📦 Equipment: APTOS 410W + IQ8HC\n📍 Markets: MD, NJ (NOT in FL)\n💳 Credit: 680 FICO recommended\n👥 Co-signer: Under 600 → tied to property; 600+ → anyone\n🏠 Property: Townhomes (if owns roof), manufactured (double-wide + affixed)\n⏱️ NTP: Within 60 days; utility bill required\n📞 Support: 844-562-6725";
+        }
+
+        if (q.includes('skylight')) {
+            return "🔹 Skylight Lending\n\n📦 Equipment: SIRIUS 450W + IQ8HC\n📍 Markets: FL, NJ (NOT in MD)\n💳 Credit: Min 670 FICO, $50k income\n📊 Max Offset: 110%\n🔧 System: Solar-only max $5.5/W, min 6kW\n➕ Add-ons: Separate system, second meter\n📞 Support: 866-471-6595";
+        }
+
+        return "I can help with:\n\n• Equipment combos by lender\n• Financing options\n• Market availability (FL, MD, NJ)\n• Permit timelines by state\n• Battery adders and pricing\n• Installation adders (roof mounts, trenching, panel upgrades)\n• Roofing and insulation pricing\n• A/C heat pumps and energy efficiency\n• Downloadable documents\n• Connecting you to a live agent\n• Contacting Sales Support\n\nWhat would you like to know?";
+                // ========== ADDITIONAL RESPONSE PATTERNS ==========
+        
+        // Welcome/Greeting responses
+        if (q === 'hi' || q === 'hello' || q === 'hey' || q === 'greetings') {
+            return "Hello! 👋 I'm the EHX Dealer Assistant. I can help with financing options, equipment specs, adder pricing, permit timelines, and more. What can I help you with today?";
+        }
+        
+        // Small talk responses
+        if (q.includes('how are you') || q.includes('how are you doing')) {
+            return "I'm doing great, thanks for asking! Ready to help you with any dealer questions. What can I assist you with today?";
+        }
+        
+        if (q.includes('what can you do') || q.includes('help me with') || q.includes('capabilities')) {
+            return "I can help you with:\n\n• Financing options (LightReach, GoodLeap, Skylight, Loans)\n• Equipment specs and combos\n• Adder pricing (batteries, installation, roofing)\n• Permit timelines by state\n• Utility information by state\n• Downloading documents and cheat sheets\n• Contacting sales support\n\nWhat would you like to know?";
+        }
+        
+        if (q.includes('thank') || q.includes('thanks') || q.includes('appreciate')) {
+            return "You're very welcome! 😊 Is there anything else I can help you with?";
+        }
+        
+        // Market availability questions
+        if (q.includes('what markets') || q.includes('available markets') || q.includes('which states')) {
+            return "📍 Active Markets:\n\n• Florida (14 utilities, 3 lenders)\n• Maryland (14 utilities, 3 lenders)\n• New Jersey (4 utilities, 4 lenders)\n\n🚀 Coming Soon:\n• New York\n• Georgia\n\nWhich market would you like more details about?";
+        }
+        
+        // Lender-specific equipment questions
+        if (q.includes('lightreach equipment') || (q.includes('lightreach') && q.includes('panel'))) {
+            return "🔹 Palmetto LightReach Equipment:\n\n• Module: SIRIUS 450W\n• Inverter: IQ8HC Microinverter\n• Batteries: Enphase IQ5P / Tesla Powerwall 3\n• Markets: FL, MD, NJ";
+        }
+        
+        if (q.includes('goodleap equipment') || (q.includes('goodleap') && q.includes('panel'))) {
+            return "🔹 GoodLeap Equipment:\n\n• Module: APTOS 410W\n• Inverter: IQ8HC Microinverter\n• Batteries: Enphase IQ5P / Tesla Powerwall 3\n• Markets: MD, NJ (NOT Florida)";
+        }
+        
+        if (q.includes('skylight equipment') || (q.includes('skylight') && q.includes('panel'))) {
+            return "🔹 Skylight Lending Equipment:\n\n• Module: SIRIUS 450W\n• Inverter: IQ8HC Microinverter\n• Batteries: Enphase IQ5P / Tesla Powerwall 3\n• Markets: FL, NJ (NOT Maryland)";
+        }
+        
+        // Battery-specific pricing
+        if (q.includes('enphase') || q.includes('iq5p')) {
+            return "🔋 Enphase IQ 5P Battery:\n\n• Price: $8,500/unit\n• Additional stack: $5,000/unit\n• Compatible with all lenders\n• Need installation adders too? Ask me about installation pricing!";
+        }
+        
+        if (q.includes('tesla') || q.includes('powerwall')) {
+            return "🔋 Tesla Powerwall 3:\n\n• Price: $14,000/unit\n• Capacity: 13.5KW\n• Compatible with all lenders\n• Ask me about battery availability by lender!";
+        }
+        
+        if (q.includes('franklin') || q.includes('apower2')) {
+            return "🔋 Franklin aPower2 Battery:\n\n• Price: $16,250/unit\n• Compatible with Loans & Cash, GoodLeap Loan\n• High-quality storage solution";
+        }
+        
+        // Installation-specific questions
+        if (q.includes('panel upgrade') || q.includes('main panel')) {
+            return "🛠️ Main Panel Upgrade: $3,500.00\n\nThis is required when the existing electrical panel cannot support the solar installation. Ask me about other installation adders!";
+        }
+        
+        if (q.includes('trenching')) {
+            return "🛠️ Trenching:\n\n• Standard: $12.00/ft\n• Concrete: $25.00/ft\n\nRequired for ground mount systems or when running conduit underground.";
+        }
+        
+        // Document shortcut
+        if (q.includes('adder sheet') || (q.includes('adder') && q.includes('download'))) {
+            return "📄 You can download the Complete Adder Sheet here:\nhttps://drive.google.com/uc?export=download&id=1RVdBgjyrDwDtR4Vw7gHCXScKKBr2EI8T\n\nOr click the 'Show me documents' button for all available resources.";
+        }
+        
+        // Florida specific
+        if (q.includes('florida utilities') || (q.includes('fl') && q.includes('utility'))) {
+            return "Florida has 14 approved utilities for LightReach including:\n\n• Duke Energy\n• Florida Power & Light (FPL)\n• Tampa Electric (TECO)\n• Orlando Utilities Commission (OUC)\n• Kissimmee Utility Authority (KUA)\n\nPlus 9 more! Ask me to 'Show me utilities' for the complete list.";
+        }
+        
+        // Maryland specific
+        if (q.includes('maryland utilities') || (q.includes('md') && q.includes('utility'))) {
+            return "Maryland has 14 approved utilities for LightReach, sharing the same utility list as Florida!\n\nTop utilities include Duke Energy, FPL, and TECO.";
+        }
+        
+        // New Jersey specific
+        if (q.includes('new jersey utilities') || (q.includes('nj') && q.includes('utility'))) {
+            return "New Jersey has 4 approved utilities:\n\n• PSE&G\n• Atlantic City Electric (ACE)\n• Jersey Central Power & Light (JCP&L)\n• Rockland Electric Co (RECO)";
+        }
+        
+        // Salary/commission questions (if relevant)
+        if (q.includes('commission') || q.includes('pay') || q.includes('salary') || q.includes('earn')) {
+            return "💰 For commission structures, pay rates, and compensation questions, please contact your sales manager or HR representative directly. The EHX Dealer Assistant focuses on technical and operational support.";
+        }
+    }
+
+    async function sendMessage(userMessage = null) {
+        const message = userMessage || chatInput.value.trim();
+        if (!message) return;
+        if (!isChatActive) return;
+
+        if (pendingEndConfirmation) {
+            const confirmation = isEndConfirmationResponse(message);
+            addMessage(message, 'user');
+            chatInput.value = '';
+            
+            if (confirmation === "confirm") {
+                showTyping();
+                setTimeout(() => {
+                    hideTyping();
+                    executeEndChat();
+                }, 300);
+            } else if (confirmation === "cancel") {
+                pendingEndConfirmation = false;
+                showTyping();
+                setTimeout(() => {
+                    hideTyping();
+                    addMessage("Great! What else can I help you with?", 'bot');
+                }, 300);
+            } else {
+                showTyping();
+                setTimeout(() => {
+                    hideTyping();
+                    addMessage("Just to confirm — do you have any other questions? (Please say 'no' to end the chat, or 'yes' to continue)", 'bot', false, true);
+                }, 300);
+            }
+            return;
+        }
+
+        addMessage(message, 'user');
+        chatInput.value = '';
+
+        const existingQuick = document.getElementById('quick-replies');
+        if (existingQuick) existingQuick.style.display = 'none';
+
+        if (isEndOfChatIntent(message)) {
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                requestEndConfirmation();
+            }, 300);
+            return;
+        }
+
+        showTyping();
+        setTimeout(() => {
+            const reply = getEHXResponse(message);
+            hideTyping();
+            
+            if (reply === "___SHOW_BATTERY_ADDERS___") {
+                showCategoryAdders('battery_backup');
+            } else if (reply === "___SHOW_INSTALLATION_ADDERS___") {
+                showCategoryAdders('installation');
+            } else if (reply === "___SHOW_ROOFING_ADDERS___") {
+                showCategoryAdders('roofing');
+            } else if (reply === "___SHOW_ALL_UTILITIES___") {
+                showAllUtilities();
+            } else if (reply === "___SHOW_DOCUMENTS___") {
+                showDocumentsList();
+            } else if (reply === "___SHOW_EQUIPMENT___") {
+                addMessage("🔧 Approved Equipment by Lender\n\n🔹 LightReach: SIRIUS 450W + IQ8HC + Enphase IQ5P / Tesla PW3 (FL, MD, NJ)\n🔹 GoodLeap: APTOS 410W + IQ8HC + Enphase IQ5P / Tesla PW3 (MD, NJ — not FL)\n🔹 Skylight: SIRIUS 450W + IQ8HC + Enphase IQ5P / Tesla PW3 (FL, NJ — not MD)\n🔹 Loans & Cash: Longi 410W + IQ8MC + Franklin aPower2 / Enphase IQ5P / Tesla PW3 (All Markets)", 'bot');
+            } else if (reply === "___SHOW_FINANCING___") {
+                addMessage("💰 Financing Options Available\n\n• Palmetto LightReach (Solar Lease)\n• GoodLeap TPO (Lease/PPA)\n• Skylight Lending (Standard Lease)\n• Loans & Cash\n\nEach has different credit requirements, equipment combos, and market availability.", 'bot');
+            } else if (reply === "___SHOW_SUPPORT___") {
+                addMessage("📞 EHX Sales Support\n\n• Phone: (727) 266-0683\n• Email: salessupport@energyharborx.com\n\nFor complex deals, exceptions, or manual review, please reach out directly.", 'bot');
+            } else if (reply === "___SHOW_ALL_PERMITS___") {
+                showAllPermitTimelines();
+            } else if (reply === "___SHOW_FLORIDA_PERMIT___") {
+                showPermitTimeline('florida');
+            } else if (reply === "___SHOW_MARYLAND_PERMIT___") {
+                showPermitTimeline('maryland');
+            } else if (reply === "___SHOW_NEWJERSEY_PERMIT___") {
+                showPermitTimeline('new jersey');
+            } else if (reply === "___SHOW_GEORGIA_PERMIT___") {
+                showPermitTimeline('georgia');
+            } else {
+                addMessage(reply, 'bot');
+            }
+        }, 400);
+    }
+
+    endChatBtn.addEventListener('click', () => {
+        if (isChatActive && !pendingEndConfirmation) {
+            addMessage("⏹️ Chat ended by user", 'user');
+            executeEndChat();
+        } else if (pendingEndConfirmation) {
+            addMessage("⏹️ Chat ended by user", 'user');
+            pendingEndConfirmation = false;
+            executeEndChat();
+        }
+    });
+
+    sendBtn.addEventListener('click', () => sendMessage());
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+
+    fullResetChat();
+</script>
+</body>
+</html>

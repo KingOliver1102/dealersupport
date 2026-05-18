@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Maryland Market | EHX Dealer Resource</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: url('images/background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.85);
+            z-index: -2;
+        }
+        
+        .header-iframe {
+            width: 100%;
+            border: none;
+            height: 80px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: #011f85;
+        }
+        
+        .main-content {
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            width: 100%;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #6366f1;
+            text-decoration: none;
+            margin-bottom: 24px;
+            font-weight: 500;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .market-hero {
+            background: linear-gradient(135deg, #3b82f6, #0891b2);
+            border-radius: 24px;
+            padding: 40px;
+            color: white;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        .market-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+        
+        .market-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        
+        .market-tagline {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .info-card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .info-card h3 {
+            font-size: 18px;
+            color: #011f85;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .utility-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .utility-tag {
+            background: #f3f4f6;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #374151;
+        }
+        
+        .lender-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .lender-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .lender-name {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .lender-status {
+            font-size: 12px;
+            background: #10b981;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+        
+        .permit-info {
+            text-align: center;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+        
+        .permit-days {
+            font-size: 28px;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+        
+        .footer-iframe {
+            width: 100%;
+            border: none;
+            height: auto;
+            min-height: 350px;
+            margin-top: 60px;
+            display: block;
+        }
+        
+        /* Chat Widget Container */
+        .chat-widget-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+            width: 380px;
+            height: 450px;
+            pointer-events: none;
+        }
+        
+        .chat-widget-container iframe {
+            pointer-events: auto;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: transparent;
+            border-radius: 20px;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+    <iframe src="components/header.html" class="header-iframe" id="headerIframe"></iframe>
+
+    <main class="main-content">
+        <a href="markets.html" class="back-link">← Back to Markets</a>
+        
+        <div class="market-hero">
+            <div class="market-icon">🦀</div>
+            <h1 class="market-title">Maryland Market</h1>
+            <p class="market-tagline">Old Line State • Active Market • Mid-Atlantic Hub</p>
+        </div>
+        
+        <div class="info-grid">
+            <div class="info-card">
+                <h3>🔌 Approved Utilities (14)</h3>
+                <div class="utility-list">
+                    <span class="utility-tag">Duke Energy</span>
+                    <span class="utility-tag">Florida Power & Light (FPL)</span>
+                    <span class="utility-tag">Tampa Electric (TECO)</span>
+                    <span class="utility-tag">Orlando Utilities Commission (OUC)</span>
+                    <span class="utility-tag">Kissimmee Utility Authority (KUA)</span>
+                    <span class="utility-tag">Lee County Electric Cooperative (LCEC)</span>
+                    <span class="utility-tag">Peace River Electric Cooperative (PREC)</span>
+                    <span class="utility-tag">Sumter Electric Cooperative (SECO)</span>
+                    <span class="utility-tag">Withlacoochee River Electric Cooperative (WREC)</span>
+                    <span class="utility-tag">Lakeland Electric</span>
+                    <span class="utility-tag">City of Tallahassee</span>
+                    <span class="utility-tag">Gainesville Regional Utilities (GRU)</span>
+                    <span class="utility-tag">City of Winter Park Utilities</span>
+                    <span class="utility-tag">Jacksonville Electric Authority (JEA)</span>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <h3>🏦 Available Lenders</h3>
+                <div class="lender-list">
+                    <div class="lender-item"><span class="lender-name">Palmetto LightReach</span><span class="lender-status">Active</span></div>
+                    <div class="lender-item"><span class="lender-name">GoodLeap TPO</span><span class="lender-status">Active</span></div>
+                    <div class="lender-item"><span class="lender-name">Loans & Cash</span><span class="lender-status">Active</span></div>
+                    <div class="lender-item"><span class="lender-name">Skylight Lending</span><span class="lender-status" style="background:#ef4444;">Not Available</span></div>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <h3>📋 Permit Information</h3>
+                <div class="permit-info">
+                    <div class="permit-days">2 - 4 Weeks</div>
+                    <div>Estimated Timeline</div>
+                    <div style="margin-top: 10px; font-size: 13px; color: #6b7280;">Timeline varies depending on local jurisdiction. Contact the local building department for specific requirements.</div>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <h3>🔧 Equipment</h3>
+                <div class="lender-list">
+                    <div class="lender-item"><span class="lender-name">Module</span><span class="lender-status">SIRIUS 450W / APTOS 410W</span></div>
+                    <div class="lender-item"><span class="lender-name">Inverter</span><span class="lender-status">IQ8HC</span></div>
+                    <div class="lender-item"><span class="lender-name">Batteries</span><span class="lender-status">Enphase IQ5P / Tesla PW3</span></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <iframe src="components/footer.html" class="footer-iframe" id="footerIframe" scrolling="no"></iframe>
+
+    <div class="chat-widget-container">
+        <iframe 
+            id="chatbotIframe"
+            src="components/chatbot.html"
+            style="position: fixed; bottom: 16px; right: 16px; width: 80px; height: 80px; border: none; background: transparent; z-index: 9999; overflow: visible;">
+        </iframe>
+    </div>
+
+    <script>
+        // Handle header and footer height adjustments
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'headerHeight') {
+                const headerIframe = document.getElementById('headerIframe');
+                if (headerIframe) {
+                    headerIframe.style.height = event.data.height + 'px';
+                }
+            }
+            
+            if (event.data.type === 'footerHeight') {
+                const footerIframe = document.getElementById('footerIframe');
+                if (footerIframe) {
+                    footerIframe.style.height = event.data.height + 'px';
+                }
+            }
+        });
+        
+        // Handle chatbot iframe resizing
+        window.addEventListener('message', function(event) {
+            const iframe = document.getElementById('chatbotIframe');
+
+            if (!iframe || !event.data || !event.data.type) return;
+
+            if (event.data.type === 'chatbot-open') {
+                iframe.style.width = '430px';
+                iframe.style.height = '620px';
+                iframe.style.top = 'auto';
+                iframe.style.bottom = '16px';
+                iframe.style.right = '16px';
+            }
+
+            if (event.data.type === 'chatbot-closed') {
+                iframe.style.width = '80px';
+                iframe.style.height = '80px';
+                iframe.style.top = 'auto';
+                iframe.style.bottom = '16px';
+                iframe.style.right = '16px';
+            }
+        });
+    </script>
+</body>
+</html>

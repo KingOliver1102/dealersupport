@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Documents & Resources | EHX Dealer Resource</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: url('images/background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+                /* ========== YOUR EXISTING CSS ABOVE HERE ========== */
+        
+        /* ========== ADD RESPONSIVE CSS BELOW ========== */
+        
+        /* Base responsive settings */
+        html {
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
+            scroll-behavior: smooth;
+        }
+        
+        /* Responsive images */
+        img, .map-image, .logo-img {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        /* Tablet specific (768px - 1024px) */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .main-content {
+                padding: 30px 20px;
+            }
+            .features-grid, .lenders-grid, .markets-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .welcome-section {
+                padding: 30px 20px;
+            }
+        }
+        
+        /* Mobile specific (up to 767px) */
+        @media (max-width: 767px) {
+            .main-content {
+                padding: 20px 16px;
+            }
+            .features-grid, .lenders-grid, .markets-grid, .adders-grid, .documents-grid, .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .welcome-section {
+                padding: 24px 16px;
+                margin-bottom: 30px;
+            }
+            .welcome-title {
+                font-size: 28px;
+                margin-bottom: 12px;
+            }
+            .welcome-text {
+                font-size: 15px;
+            }
+            .section-title {
+                font-size: 22px;
+                margin-bottom: 20px;
+            }
+            /* Card adjustments */
+            .lender-card, .market-card, .adder-category, .document-card, .feature-card {
+                padding: 16px;
+            }
+            .lender-header, .market-header {
+                padding: 16px;
+            }
+            .lender-name, .market-name {
+                font-size: 20px;
+            }
+            .info-row {
+                flex-direction: column;
+                margin-bottom: 10px;
+            }
+            .info-label {
+                width: 100%;
+                margin-bottom: 4px;
+            }
+            /* Table responsive */
+            .comparison-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                font-size: 12px;
+            }
+            /* Button adjustments */
+            .btn-download, .btn-spec, .contact-link {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+            /* Footer adjustments */
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                text-align: center;
+            }
+            .footer-contact li {
+                justify-content: center;
+            }
+        }
+        
+        /* Small mobile (up to 480px) */
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 16px 12px;
+            }
+            .welcome-section {
+                padding: 20px 12px;
+            }
+            .welcome-title {
+                font-size: 24px;
+            }
+            .page-title {
+                font-size: 24px;
+            }
+            .feature-icon {
+                font-size: 36px;
+            }
+            .feature-title {
+                font-size: 16px;
+            }
+            .feature-desc {
+                font-size: 13px;
+            }
+            .badge, .utility-tag, .battery-item {
+                font-size: 10px;
+                padding: 3px 8px;
+            }
+            .comparison-table th, .comparison-table td {
+                padding: 8px;
+            }
+        }
+        
+        /* Large screens (1200px and up) */
+        @media (min-width: 1200px) {
+            .main-content {
+                padding: 50px 30px;
+            }
+            .features-grid, .lenders-grid, .markets-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        /* Fix for tables on mobile */
+        @media (max-width: 768px) {
+            .comparison-section {
+                padding: 16px;
+                overflow-x: auto;
+            }
+            .comparison-table {
+                min-width: 600px;
+            }
+        }
+        
+        /* Fix for forms and inputs on mobile */
+        @media (max-width: 768px) {
+            input, textarea, select, button {
+                font-size: 16px;
+            }
+        }
+        
+        /* Touch-friendly adjustments */
+        @media (max-width: 768px) {
+            .feature-card, .market-card, .lender-card {
+                cursor: pointer;
+                -webkit-tap-highlight-color: transparent;
+            }
+            .feature-card:active, .market-card:active, .lender-card:active {
+                transform: scale(0.98);
+            }
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.85);
+            z-index: -2;
+        }
+
+        .header-iframe {
+            width: 100%;
+            border: none;
+            height: 80px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: #011f85;
+        }
+
+        .main-content {
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            width: 100%;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-size: 36px;
+            color: #011f85;
+            margin-bottom: 16px;
+        }
+
+        .page-subtitle {
+            font-size: 18px;
+            color: #555;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        /* Category Sections */
+        .category-section {
+            margin-bottom: 50px;
+        }
+
+        .category-title {
+            font-size: 24px;
+            color: #011f85;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .category-icon {
+            font-size: 28px;
+        }
+
+        /* Documents Grid */
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+        }
+
+        .document-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .document-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .document-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .document-icon {
+            font-size: 44px;
+        }
+
+        .document-info {
+            flex: 1;
+        }
+
+        .document-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #011f85;
+            margin-bottom: 4px;
+        }
+
+        .document-category {
+            display: inline-block;
+            background: #eef2ff;
+            color: #4f46e5;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .document-description {
+            font-size: 14px;
+            color: #6b7280;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            flex: 1;
+        }
+
+        .document-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            padding-top: 16px;
+            border-top: 1px solid #f0f0f0;
+            /* Remove flex-direction: row-reverse */
+        }
+
+        .document-date {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #6366f1;
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-download:hover {
+            background: #4f46e5;
+            transform: scale(1.02);
+        }
+
+        /* Quick Access Banner */
+        .quick-access {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .quick-access h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .quick-access p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .btn-quick {
+            background: white;
+            color: #4f46e5;
+            text-decoration: none;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .btn-quick:hover {
+            transform: scale(1.02);
+            background: #f8fafc;
+        }
+
+   .footer-iframe {
+    width: 100%;
+    border: none;
+    height: auto;
+    min-height: 350px;
+    margin-top: 60px;
+    display: block;
+}
+      /* Chat Widget - Fixed position that doesn't block content */
+.chat-widget-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999;
+    width: 380px;
+    height: 400px;
+    pointer-events: none;  /* Allows clicks to pass through the container */
+}
+
+.chat-widget-container iframe {
+    pointer-events: auto;  /* Chatbot remains clickable */
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: transparent;
+}
+
+@media (max-width: 768px) {
+    .chat-widget-container {
+        width: calc(100vw - 40px);
+        height: calc(100vh - 100px);
+    }
+}
+
+@media (min-width: 1200px) {
+    .chat-widget-container {
+        width: 420px;
+        height: 700px;
+    }
+}
+
+            .page-title {
+                font-size: 28px;
+            }
+
+            .documents-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-access {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-iframe {
+                height: 480px;
+            }
+
+            .chat-widget-container {
+                width: calc(100vw - 40px);
+                right: 20px;
+                bottom: 20px;
+            }
+
+            .document-meta {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+        @media (min-width: 1200px) {
+            .chat-widget-container {
+                width: 420px;
+            }
+
+            .footer-iframe {
+                height: 360px;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <iframe src="components/header.html" class="header-iframe" id="headerIframe"></iframe>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">📚 Documents & Resources</h1>
+            <p class="page-subtitle">Access all dealer resources, cheat sheets, spec sheets, and sales guides in one
+                place.</p>
+        </div>
+
+        <!-- Quick Access Banner -->
+        <div class="quick-access">
+            <div>
+                <h3>📥 Need everything at once?</h3>
+                <p>Download all resources bundled together for offline access.</p>
+            </div>
+            <a href="#" class="btn-quick" id="downloadAllBtn">
+                📦 Download All Resources (ZIP)
+            </a>
+        </div>
+
+        <!-- Cheat Sheets Section -->
+        <div class="category-section">
+            <h2 class="category-title">
+                <span class="category-icon">📘</span>
+                Lender Cheat Sheets
+            </h2>
+            <div class="documents-grid" id="cheatSheetsGrid"></div>
+        </div>
+
+        <!-- Spec Sheets Section -->
+        <div class="category-section">
+            <h2 class="category-title">
+                <span class="category-icon">🔧</span>
+                Equipment Spec Sheets
+            </h2>
+            <div class="documents-grid" id="specSheetsGrid"></div>
+        </div>
+
+        <!-- Sales Tools Section -->
+        <div class="category-section">
+            <h2 class="category-title">
+                <span class="category-icon">📞</span>
+                Sales Tools & Scripts
+            </h2>
+            <div class="documents-grid" id="salesToolsGrid"></div>
+        </div>
+
+        <!-- Pricing Guides Section -->
+        <div class="category-section">
+            <h2 class="category-title">
+                <span class="category-icon">💰</span>
+                Pricing Guides
+            </h2>
+            <div class="documents-grid" id="pricingGrid"></div>
+        </div>
+    </main>
+
+   <iframe src="components/footer.html" class="footer-iframe" id="footerIframe" scrolling="no"></iframe>
+<div class="chat-widget-container">
+    <iframe src="components/chatbot.html"></iframe>
+</div>
+
+    <script>
+     window.addEventListener('message', function(event) {
+    // Header height adjustment
+    if (event.data.type === 'headerHeight') {
+        const headerIframe = document.getElementById('headerIframe');
+        if (headerIframe) {
+            headerIframe.style.height = event.data.height + 'px';
+        }
+    }
+    
+    // Footer height adjustment - ADD THIS
+    if (event.data.type === 'footerHeight') {
+        const footerIframe = document.getElementById('footerIframe');
+        if (footerIframe) {
+            footerIframe.style.height = event.data.height + 'px';
+        }
+    }
+});
+
+        // Document data
+        const cheatSheets = [
+            {
+                icon: "🏦",
+                title: "LightReach Cheat Sheet",
+                category: "Palmetto LightReach",
+                description: "Credit requirements, property eligibility, roof guidelines, and market availability for LightReach.",
+                url: "https://drive.google.com/uc?export=download&id=1cvUqOKDg2f1le5dnGCtA2x58BKbXz6Ha",
+                date: "March 2026"
+            },
+            {
+                icon: "🏦",
+                title: "GoodLeap TPO Cheat Sheet",
+                category: "GoodLeap",
+                description: "Credit requirements, co-signer rules, NTP guidelines, and property types accepted.",
+                url: "https://drive.google.com/uc?export=download&id=1arvsS3hg7OTZh24LVEcEn7bpqPc3L-vs",
+                date: "March 2026"
+            },
+            {
+                icon: "🏦",
+                title: "Skylight Lending Cheat Sheet",
+                category: "Skylight",
+                description: "Qualifications, income requirements, equipment combos, and market restrictions.",
+                url: "https://drive.google.com/uc?export=download&id=197wbskO-NG0QToX0IqKQR55kTMH_JMLU",
+                date: "March 2026"
+            }
+        ];
+
+        const specSheets = [
+            {
+                icon: "📄",
+                title: "SIRIUS 450W Panel Spec Sheet",
+                category: "Module",
+                description: "Complete technical specifications for the SIRIUS 450W solar panel.",
+                url: "https://drive.google.com/uc?export=download&id=1qd7mQlLXnWfL2SIzzP3fe3iBcmITYgKH",
+                date: "March 2026"
+            },
+            {
+                icon: "📄",
+                title: "APTOS 410W Panel Spec Sheet",
+                category: "Module",
+                description: "Complete technical specifications for the APTOS 410W solar panel.",
+                url: "https://drive.google.com/uc?export=download&id=1zilcBGysRw33n-R-Vtf0d-SC4j1Jd4ja",
+                date: "March 2026"
+            },
+            {
+                icon: "📄",
+                title: "Longi 410W Panel Spec Sheet",
+                category: "Module",
+                description: "Complete technical specifications for the Longi 410W solar panel.",
+                url: "https://drive.google.com/uc?export=download&id=1kxt70ZcHf6dm0T8H-6BP46TmRpe6WKLv",
+                date: "March 2026"
+            },
+            {
+                icon: "🔋",
+                title: "Enphase IQ5P Battery Spec Sheet",
+                category: "Battery",
+                description: "Technical specifications and installation requirements for IQ5P battery.",
+                url: "https://drive.google.com/uc?export=download&id=1UkjD8dsCMhuQxZvsDJfCS_79F30oiTEy",
+                date: "March 2026"
+            },
+            {
+                icon: "🔋",
+                title: "Tesla Powerwall 3 Spec Sheet",
+                category: "Battery",
+                description: "Technical specifications and installation requirements for Tesla Powerwall 3.",
+                url: "https://drive.google.com/uc?export=download&id=1IczXYtuqYXoMFlCwcQaZF43DW2RnGz7k",
+                date: "March 2026"
+            },
+            {
+                icon: "🔋",
+                title: "Franklin aPower2 Spec Sheet",
+                category: "Battery",
+                description: "Technical specifications and installation requirements for Franklin aPower2 battery.",
+                url: "https://drive.google.com/uc?export=download&id=1z0M1ulj8IUCGAkNV0tXyZPxl9PJVsN2o",
+                date: "March 2026"
+            }
+        ];
+
+        const salesTools = [
+            {
+                icon: "📞",
+                title: "Welcome Call Script",
+                category: "Sales Script",
+                description: "Complete script for customer welcome calls to ensure consistent and professional communication.",
+                url: "https://drive.google.com/uc?export=download&id=17YP9Ru5PdHckVKG0z3lBKcYmypPJ2rD8",
+                date: "March 2026"
+            }
+        ];
+
+        const pricingGuides = [
+            {
+                icon: "💰",
+                title: "Complete Adder Sheet",
+                category: "Pricing",
+                description: "Full pricing guide for batteries, installation, roofing, and energy efficiency adders.",
+                url: "https://drive.google.com/uc?export=download&id=1RVdBgjyrDwDtR4Vw7gHCXScKKBr2EI8T",
+                date: "March 2026"
+            }
+        ];
+
+        // Function to render document cards
+        function renderDocuments(containerId, documents) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            documents.forEach(doc => {
+                const card = document.createElement('div');
+                card.className = 'document-card';
+                card.innerHTML = `
+                    <div class="document-header">
+                        <div class="document-icon">${doc.icon}</div>
+                        <div class="document-info">
+                            <div class="document-title">${doc.title}</div>
+                            <div class="document-category">${doc.category}</div>
+                        </div>
+                    </div>
+                    <div class="document-description">${doc.description}</div>
+                    <div class="document-meta">
+                        <span class="document-date">📅 Updated: ${doc.date}</span>
+                        <a href="${doc.url}" class="btn-download" target="_blank">
+                            📥 Download PDF
+                        </a>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Render all sections
+        renderDocuments('cheatSheetsGrid', cheatSheets);
+        renderDocuments('specSheetsGrid', specSheets);
+        renderDocuments('salesToolsGrid', salesTools);
+        renderDocuments('pricingGrid', pricingGuides);
+
+        // Download all button (placeholder - you can add a ZIP file later)
+        const downloadAllBtn = document.getElementById('downloadAllBtn');
+        if (downloadAllBtn) {
+            downloadAllBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                alert('Coming soon: All resources will be available as a single ZIP download.');
+            });
+        }
+    </script>
+</body>
+
+</html>

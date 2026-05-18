@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Adder Pricing | EHX Dealer Resource</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: url('images/background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.85);
+            z-index: -2;
+        }
+        
+        .header-iframe {
+            width: 100%;
+            border: none;
+            height: 80px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: #011f85;
+        }
+        
+        .main-content {
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            width: 100%;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .page-title {
+            font-size: 36px;
+            color: #011f85;
+            margin-bottom: 16px;
+        }
+        
+        .page-subtitle {
+            font-size: 18px;
+            color: #555;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        
+        .download-banner {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-radius: 20px;
+            padding: 24px 32px;
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            color: white;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            flex-direction: row;
+        }
+        
+        .banner-text {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+        }
+        
+        .banner-icon {
+            font-size: 40px;
+            background: rgba(255,255,255,0.2);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .download-banner h3 {
+            font-size: 20px;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+        
+        .download-banner p {
+            font-size: 14px;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+        
+        .btn-download-all {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            color: #059669;
+            text-decoration: none;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            white-space: nowrap;
+        }
+        
+        .btn-download-all:hover {
+            transform: translateY(-2px);
+            background: #f0fdf4;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        .adders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+        
+        .adder-category {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .adder-category:hover {
+            transform: translateY(-4px);
+        }
+        
+        .category-header {
+            padding: 20px 24px;
+            color: white;
+        }
+        
+        .category-header.battery { background: linear-gradient(135deg, #10b981, #059669); }
+        .category-header.ac { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+        .category-header.energy { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .category-header.installation { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+        .category-header.office { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .category-header.inverter { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .category-header.domestic { background: linear-gradient(135deg, #14b8a6, #0d9488); }
+        .category-header.roofing { background: linear-gradient(135deg, #78716c, #57534e); }
+        .category-header.insulation { background: linear-gradient(135deg, #a855f7, #9333ea); }
+        
+        .category-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        
+        .category-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .category-subtitle {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+        
+        .category-body {
+            padding: 20px;
+            flex: 1;
+        }
+        
+        .adder-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .adder-item:last-child {
+            border-bottom: none;
+        }
+        
+        .adder-name {
+            font-weight: 500;
+            color: #1f2937;
+            font-size: 14px;
+            flex: 1;
+        }
+        
+        .adder-price {
+            font-weight: 700;
+            color: #4f46e5;
+            font-size: 15px;
+            background: #eef2ff;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+        
+        .footer-note {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 12px;
+            margin-top: 16px;
+            text-align: center;
+            font-size: 11px;
+            color: #6b7280;
+        }
+        
+        .footer-iframe {
+            width: 100%;
+            border: none;
+            height: auto;
+            min-height: 350px;
+            margin-top: 60px;
+            display: block;
+        }
+        
+        /* Chat Widget Container */
+        .chat-widget-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+            width: 380px;
+            height: 450px;
+            pointer-events: none;
+        }
+        
+        .chat-widget-container iframe {
+            pointer-events: auto;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: transparent;
+            border-radius: 20px;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+    <iframe src="components/header.html" class="header-iframe" id="headerIframe"></iframe>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">➕ Adder Pricing</h1>
+            <p class="page-subtitle">Complete pricing for batteries, installation, roofing, energy efficiency, and more. Updated March 2026.</p>
+        </div>
+
+        <!-- DIRECT DOWNLOAD BANNER -->
+        <div class="download-banner">
+            <a href="https://drive.google.com/uc?export=download&id=1RVdBgjyrDwDtR4Vw7gHCXScKKBr2EI8T" 
+               class="btn-download-all" 
+               target="_blank">
+                📄 Download Adders.PDF
+            </a>
+            <div class="banner-text">
+                <div class="banner-icon"></div>
+                <div>
+                    <h3>Complete Adder Sheet</h3>
+                    <p>Full pricing guide for batteries, installation, roofing, and energy efficiency adders. Updated March 2026.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="adders-grid">
+            
+            <!-- Battery Backup -->
+            <div class="adder-category">
+                <div class="category-header battery">
+                    <div class="category-icon">🔋</div>
+                    <div class="category-title">Battery Backup</div>
+                    <div class="category-subtitle">Per unit pricing</div>
+                </div>
+                <div class="category-body">
+                    <div class="adder-item"><span class="adder-name">Enphase IQ 5P</span><span class="adder-price">$8,500/unit</span></div>
+                    <div class="adder-item"><span class="adder-name">Enphase IQ 5P additional stack</span><span class="adder-price">$5,000/unit</span></div>
+                    <div class="adder-item"><span class="adder-name">Franklin Battery 15 KW</span><span class="adder-price">$16,250/unit</span></div>
+                    <div class="adder-item"><span class="adder-name">HomeGrid Stack 9.6 KW</span><span class="adder-price">$9,500/unit</span></div>
+                    <div class="adder-item"><span class="adder-name">HomeGrid 3.8 KW additional stack</span><span class="adder-price">$3,000/unit</span></div>
+                    <div class="adder-item"><span class="adder-name">Tesla Powerwall 3 13.5KW</span><span class="adder-price">$14,000/unit</span></div>
+                    <div class="adder-item"><span class="adder-name">Transfer Switch</span><span class="adder-price">$2,800.00</span></div>
+                    <div class="footer-note">⚡ Prices are per unit. Additional stacks available for select models.</div>
+                </div>
+            </div>
+
+            <!-- A/C Heat Pumps -->
+            <div class="adder-category">
+                <div class="category-header ac">
+                    <div class="category-icon">❄️</div>
+                    <div class="category-title">A/C Heat Pumps</div>
+                    <div class="category-subtitle">18+ SEER</div>
+                </div>
+                <div class="category-body">
+                    <div class="adder-item"><span class="adder-name">2 Ton</span><span class="adder-price">$9,000.00</span></div>
+                    <div class="adder-item"><span class="adder-name">3 Ton</span><span class="adder-price">$10,500.00</span></div>
+                    <div class="adder-item"><span class="adder-name">4 Ton</span><span class="adder-price">$12,000.00</span></div>
+                    <div class="adder-item"><span class="adder-name">5 Ton</span><span class="adder-price">$12,500.00</span></div>
+                </div>
+            </div>
+
+            <!-- Energy Efficiency -->
+            <div class="adder-category">
+                <div class="category-header energy">
+                    <div class="category-icon">💡</div>
+                    <div class="category-title">Energy Efficiency</div>
+                    <div class="category-subtitle">Additional upgrades</div>
+                </div>
+                <div class="category-body">
+                    <div class="adder-item"><span class="adder-name">Hybrid Hot Water Heater</span><span class="adder-price">$3,800.00</span></div>
+                    <div class="adder-item"><span class="adder-name">Panel Cleaning Service</span><span class="adder-price">$350.00</span></div>
+                    <div class="adder-item"><span class="adder-name">Puronics Water Filtration</span><span class="adder-price">$2,000.00</span></div>
+                    <div class="adder-item"><span class="adder-name">Solar Attic Fan</span><span class="adder-price">$1,400.00</span></div>
+                    <div class="adder-item"><span class="adder-name">Variable Speed Pool Pump</span><span class="adder-price">$3,500.00</span></div>
+                    <div class="adder-item"><span class="adder-name">Tankless Hot Water Heater</span><span class="adder-price">$3,800.00</span></div>
+                </div>
+            </div>
+
+            <!-- Installation Adders -->
+            <div class="adder-category">
+                <div class="category-header installation">
+                    <div class="category-icon">🛠️</div>
+                    <div class="category-title">Installation Adders</div>
+                    <div class="category-subtitle">Per project</div>
+                </div>
+                <div class="category-body">
+                    <div class="adder-item"><span class="adder-name">Concrete Tile Roof Mount</span><span class="adder-price">$0.25/W</span></div>
+                    <div class="adder-item"><span class="adder-name">Ground Mount</span><span class="adder-price">$0.70/W</span></div>
+                    <div class="adder-item"><span class="adder-name">Metal Roof Mount</span><span class="adder-price">$0.20/W</span></div>
+                    <div class="adder-item"><span class="adder-name">Remove And Reinstall Solar</span><span class="adder-price">$225/panel</span></div>
+                    <div class="adder-item"><span class="adder-name">Small System (&lt; 4.5kW)</span><span class="adder-price">$1,000.00</span></div>
+                    <div class="adder-item"><span class="adder-name">Steep Roof</span><span class="adder-price">$0.10/W</span></div>
+                    <div class="adder-item"><span class="adder-name">Trenching</span><span class="adder-price">$12.00/ft</span></div>
+                    <div class="adder-item"><span class="adder-name">Trenching (Concrete)</span><span class="adder-price">$25.00/ft</span></div>
+                    <div class="adder-item"><span class="adder-name">3 Story Roof</span><span class="adder-price">$1,500.00</span></div>
+                    <div class="adder-item"><span class="adder-name">Main Panel Upgrade</span><span class="adder-price">$3,500.00</span></div>
+                    <div class="adder-item"><span class="adder-name">Tile Roof Mount</span><span class="adder-price">$0.25/W</span></div>
+                    <div class="adder-item"><span class="adder-name">Tree Trimming</span><span class="adder-price">Requires Estimate</span></div>
+                    <div class="adder-item"><span class="adder-name">Expedited Install</span><span class="adder-price">$1,000.00</span></div>
+                    <div class="footer-note">⚠️ Tree trimming requires a site-specific estimate.</div>
+                </div>
+            </div>
+
+            <!-- Office Adders -->
+            <div class="adder-category">
+                <div class="category-header office">
+                    <div class="category-icon">📋</div>
+                    <div class="category-title">Office Adders</div>
+                    <div class="category-subtitle">Per project fees</div>
+                </div>
+                <div class="category-body">
+                    <div class="adder-item"><span class="adder-name">Admin Fee (Office / Every project)</span><span class="adder-price">$600.00</span></div>
+                    <div class="adder-item"><span class="adder-name">Travel Fee (Over 200 Miles from Ops HQ)</span><span class="adder-price">$500.00</span></div>
+                </div>
+            </div>
+
+            <!-- Inverter -->
+            <div class="adder-category">
+                <div class="category-header inverter">
+                    <div class="category-icon">⚡</div>
+                    <div class="category-title">Inverter</div>
+                    <div class="category-subtitle">Premium option</div>
+                </div>
+                <div class="category-body">
+                    <div class="adder-item"><span class="adder-name">Sol Ark</span><span class="adder-price">$6,500.00</span></div>
+                </div>
+            </div>
+
+            <!-- Domestic Content -->
+            <div class="adder-category">
+                <div class="category-header domestic">
+                    <div class="category-icon">📦</div>
+                    <div class="category-title">Domestic Content</div>
+                    <div class="category-subtitle">Made in USA</div>
+                </div>
+                <div class="category-body">
+                    <div class="adder-item"><span class="adder-name">Enphase IQ8HC</span><span class="adder-price">$0.10/W</span></div>
+                    <div class="adder-item"><span class="adder-name">Q Cell 430W/AC</span><span class="adder-price">$0.20/W</span></div>
+                </div>
+            </div>
+
+            <!-- Roofing -->
+            <div class="adder-category">
+                <div class="category-header roofing">
+                    <div class="category-icon">🏠</div>
+                    <div class="category-title">Roofing</div>
+                    <div class="category-subtitle">Per square (100 sq ft)</div>
+                </div>
+                <div class="category-body">
+                    <div class="adder-item"><span class="adder-name">Re-Roof Cement Tile</span><span class="adder-price">$1,900/square</span></div>
+                    <div class="adder-item"><span class="adder-name">Re-Roof Ceramic Tile</span><span class="adder-price">$1,300/square</span></div>
+                    <div class="adder-item"><span class="adder-name">Re-Roof Metal Exposed Fastener</span><span class="adder-price">$975/square</span></div>
+                    <div class="adder-item"><span class="adder-name">Re-Roof Metal Standing Seam</span><span class="adder-price">$1,800/square</span></div>
+                    <div class="adder-item"><span class="adder-name">Re-Roof Shingles</span><span class="adder-price">$510.00/square</span></div>
+                    <div class="footer-note">📐 1 square = 100 square feet</div>
+                </div>
+            </div>
+
+            <!-- Insulation -->
+            <div class="adder-category">
+                <div class="category-header insulation">
+                    <div class="category-icon">🏠</div>
+                    <div class="category-title">Insulation</div>
+                    <div class="category-subtitle">Energy efficiency</div>
+                </div>
+                <div class="category-body">
+                    <div class="adder-item"><span class="adder-name">Arctic Blanket</span><span class="adder-price">$3.99/ft</span></div>
+                    <div class="adder-item"><span class="adder-name">R 38 Insulation</span><span class="adder-price">$1.50/sq ft</span></div>
+                    <div class="adder-item"><span class="adder-name">Radiant Barrier</span><span class="adder-price">$1.10/sq ft</span></div>
+                    <div class="adder-item"><span class="adder-name">Spray Foam Insulation</span><span class="adder-price">$3.50/sq ft</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; padding: 20px; background: rgba(255,255,255,0.8); border-radius: 16px;">
+            <p style="font-size: 13px; color: #6b7280;">
+                📋 All prices subject to change. Last updated: March 24, 2026. Contact sales support for the most current pricing.
+            </p>
+        </div>
+    </main>
+
+    <iframe src="components/footer.html" class="footer-iframe" id="footerIframe" scrolling="no"></iframe>
+
+    <div class="chat-widget-container">
+        <iframe 
+            id="chatbotIframe"
+            src="components/chatbot.html"
+            style="position: fixed; bottom: 16px; right: 16px; width: 80px; height: 80px; border: none; background: transparent; z-index: 9999; overflow: visible;">
+        </iframe>
+    </div>
+
+    <script>
+        // Handle header and footer height adjustments
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'headerHeight') {
+                const headerIframe = document.getElementById('headerIframe');
+                if (headerIframe) {
+                    headerIframe.style.height = event.data.height + 'px';
+                }
+            }
+            
+            if (event.data.type === 'footerHeight') {
+                const footerIframe = document.getElementById('footerIframe');
+                if (footerIframe) {
+                    footerIframe.style.height = event.data.height + 'px';
+                }
+            }
+        });
+        
+        // Handle chatbot iframe resizing
+        window.addEventListener('message', function(event) {
+            const iframe = document.getElementById('chatbotIframe');
+
+            if (!iframe || !event.data || !event.data.type) return;
+
+            if (event.data.type === 'chatbot-open') {
+                iframe.style.width = '430px';
+                iframe.style.height = '620px';
+                iframe.style.top = 'auto';
+                iframe.style.bottom = '16px';
+                iframe.style.right = '16px';
+            }
+
+            if (event.data.type === 'chatbot-closed') {
+                iframe.style.width = '80px';
+                iframe.style.height = '80px';
+                iframe.style.top = 'auto';
+                iframe.style.bottom = '16px';
+                iframe.style.right = '16px';
+            }
+        });
+    </script>
+</body>
+</html>
