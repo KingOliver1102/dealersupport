@@ -23,7 +23,6 @@
             background-attachment: fixed;
             background-repeat: no-repeat;
         }
-                /* ========== YOUR EXISTING CSS ABOVE HERE ========== */
         
         /* ========== ADD RESPONSIVE CSS BELOW ========== */
         
@@ -293,57 +292,80 @@
             line-height: 1.5;
         }
         
-        /* Footer iframe - FIXED HEIGHT, NO SCROLL */
-      .footer-iframe {
-    width: 100%;
-    border: none;
-    height: auto;
-    min-height: 350px;
-    margin-top: 60px;
-    display: block;
-}
+        /* Footer iframe */
+        .footer-iframe {
+            width: 100%;
+            border: none;
+            height: auto;
+            min-height: 350px;
+            margin-top: 60px;
+            display: block;
+        }
         
-        /* Chat Widget */
-       /* Chat Widget - Fixed position that doesn't block content */
-/* Chat Widget Container - Floats but doesn't block clicks */
-.chat-widget-container {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 999;
-    width: auto;
-    height: auto;
-    pointer-events: none;  /* Allows clicks to pass through the container */
-}
+        /* ========== UNIFORM CHAT WIDGET STYLES ========== */
+        /* Chat Widget Container */
+        .chat-widget-container {
+            position: fixed;
+            bottom: 24px;
+            bottom: max(24px, env(safe-area-inset-bottom, 24px));
+            right: 24px;
+            right: max(24px, env(safe-area-inset-right, 24px));
+            z-index: 999;
+            width: auto;
+            height: auto;
+            pointer-events: none;
+        }
 
-.chat-widget-container iframe {
-    width: 380px;
-    height: 650px;
-    border: none;
-    background: transparent;
-    pointer-events: auto;  /* Chatbot itself remains clickable */
-    border-radius: 24px;
-}
+        .chat-widget-container iframe {
+            width: 80px;
+            height: 80px;
+            border: none;
+            background: transparent;
+            pointer-events: auto;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
 
-@media (max-width: 768px) {
-    .chat-widget-container iframe {
-        width: calc(100vw - 40px);
-        height: calc(100vh - 100px);
-        right: 20px;
-        bottom: 20px;
-    }
-}
+        /* Chat open state - applied by JavaScript */
+        .chat-widget-container iframe.chat-open {
+            width: 380px;
+            height: 600px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        }
 
-@media (min-width: 1200px) {
-    .chat-widget-container iframe {
-        width: 420px;
-        height: 700px;
-    }
-}
-            .footer-iframe {
-                height: 360px;
+        /* Mobile adjustments */
+        @media (max-width: 550px) {
+            .chat-widget-container {
+                bottom: 16px;
+                right: 16px;
             }
-    
+            .chat-widget-container iframe.chat-open {
+                width: calc(100vw - 32px);
+                height: calc(100vh - 32px);
+                max-height: 600px;
+            }
+        }
+
+        /* Tablet */
+        @media (min-width: 768px) {
+            .chat-widget-container iframe.chat-open {
+                width: 380px;
+                height: 600px;
+            }
+        }
+
+        /* Desktop */
+        @media (min-width: 1200px) {
+            .chat-widget-container {
+                bottom: 32px;
+                right: 32px;
+            }
+            .chat-widget-container iframe.chat-open {
+                width: 400px;
+                height: 650px;
+            }
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
@@ -367,7 +389,7 @@
                     <div class="feature-title">Financing Options</div>
                     <div class="feature-desc">LightReach, GoodLeap, Skylight Lending, Loans & Cash</div>
                 </a>
-                                <a href="adders.html" class="feature-card">
+                <a href="adders.html" class="feature-card">
                     <div class="feature-icon">➕</div>
                     <div class="feature-title">Adder Pricing</div>
                     <div class="feature-desc">Batteries, roofing, installation, and energy efficiency</div>
@@ -386,70 +408,88 @@
         </div>
     </main>
 
-    <!-- Footer iframe - FIXED HEIGHT -->
-   <iframe src="components/footer.html" class="footer-iframe" id="footerIframe" scrolling="no"></iframe>
+    <!-- Footer iframe -->
+    <iframe src="components/footer.html" class="footer-iframe" id="footerIframe" scrolling="no"></iframe>
 
-    <!-- Chat Widget -->
+    <!-- Chat Widget - UNIFORM -->
     <div class="chat-widget-container">
         <iframe 
-    id="chatbotIframe"
-    src="components/chatbot.html"
-    style="
-        position: fixed;
-        bottom: 16px;
-        right: 16px;
-        width: 80px;
-        height: 80px;
-        border: none;
-        background: transparent;
-        z-index: 9999;
-        overflow: visible;
-    ">
-</iframe>
+            id="chatbotIframe"
+            src="components/chatbot.html"
+            style="
+                position: fixed;
+                bottom: 24px;
+                right: 24px;
+                width: 80px;
+                height: 80px;
+                border: none;
+                background: transparent;
+                z-index: 9999;
+                overflow: visible;
+            ">
+        </iframe>
     </div>
 
     <script>
-        // Handle header height adjustment only
+        // Handle messages from iframes
         window.addEventListener('message', function(event) {
-    // Header height adjustment
-    if (event.data.type === 'headerHeight') {
-        const headerIframe = document.getElementById('headerIframe');
-        if (headerIframe) {
-            headerIframe.style.height = event.data.height + 'px';
-        }
-    }
-    
-    // Footer height adjustment - ADD THIS
-    if (event.data.type === 'footerHeight') {
-        const footerIframe = document.getElementById('footerIframe');
-        if (footerIframe) {
-            footerIframe.style.height = event.data.height + 'px';
-        }
-    }
-});
+            // Header height adjustment
+            if (event.data.type === 'headerHeight') {
+                const headerIframe = document.getElementById('headerIframe');
+                if (headerIframe) {
+                    headerIframe.style.height = event.data.height + 'px';
+                }
+            }
+            
+            // Footer height adjustment
+            if (event.data.type === 'footerHeight') {
+                const footerIframe = document.getElementById('footerIframe');
+                if (footerIframe) {
+                    footerIframe.style.height = event.data.height + 'px';
+                }
+            }
+
+            // Chatbot open/close - UNIFORM SIZING
+            const chatbotIframe = document.getElementById('chatbotIframe');
+            if (!chatbotIframe || !event.data || !event.data.type) return;
+
+            if (event.data.type === 'chatbot-open') {
+                chatbotIframe.style.width = '380px';
+                chatbotIframe.style.height = '600px';
+                chatbotIframe.style.borderRadius = '16px';
+                chatbotIframe.style.bottom = '24px';
+                chatbotIframe.style.right = '24px';
+                chatbotIframe.style.top = 'auto';
+                chatbotIframe.style.left = 'auto';
+                
+                // Mobile adjustments
+                if (window.innerWidth <= 550) {
+                    chatbotIframe.style.width = 'calc(100vw - 32px)';
+                    chatbotIframe.style.height = 'calc(100vh - 32px)';
+                    chatbotIframe.style.maxHeight = '600px';
+                    chatbotIframe.style.bottom = '16px';
+                    chatbotIframe.style.right = '16px';
+                }
+                
+                // Desktop adjustments
+                if (window.innerWidth >= 1200) {
+                    chatbotIframe.style.width = '400px';
+                    chatbotIframe.style.height = '650px';
+                    chatbotIframe.style.bottom = '32px';
+                    chatbotIframe.style.right = '32px';
+                }
+            }
+
+            if (event.data.type === 'chatbot-closed') {
+                chatbotIframe.style.width = '80px';
+                chatbotIframe.style.height = '80px';
+                chatbotIframe.style.borderRadius = '50%';
+                chatbotIframe.style.bottom = '24px';
+                chatbotIframe.style.right = '24px';
+                chatbotIframe.style.top = 'auto';
+                chatbotIframe.style.left = 'auto';
+            }
+        });
     </script>
-    <script>
-window.addEventListener('message', function(event) {
-    const iframe = document.getElementById('chatbotIframe');
-
-    if (!iframe || !event.data || !event.data.type) return;
-
-    if (event.data.type === 'chatbot-open') {
-        iframe.style.width = '430px';
-        iframe.style.height = '620px';
-        iframe.style.top = 'auto';
-        iframe.style.bottom = '16px';
-        iframe.style.right = '16px';
-    }
-
-    if (event.data.type === 'chatbot-closed') {
-        iframe.style.width = '80px';
-        iframe.style.height = '80px';
-        iframe.style.top = 'auto';
-        iframe.style.bottom = '16px';
-        iframe.style.right = '16px';
-    }
-});
-</script>
 </body>
-</html
+</html>
