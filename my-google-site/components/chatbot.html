@@ -3,7 +3,7 @@
 <head>
     <title>EHX Dealer Assistant</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <style>
         * {
             margin: 0;
@@ -11,19 +11,24 @@
             box-sizing: border-box;
         }
 
-        /* Base Body Styles - Responsive */
+        /* Base Body Styles - iPhone Optimized */
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
             background: transparent;
             min-height: 100vh;
+            min-height: -webkit-fill-available; /* Fix for iOS Safari */
             overflow: visible;
+            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on iPhone */
+            -webkit-touch-callout: none; /* Prevent callout on long press */
+            -webkit-user-select: none; /* Prevent text selection */
+            user-select: none;
         }
 
-        /* Floating Button - BOTTOM RIGHT (original position) */
+        /* Floating Button - BOTTOM RIGHT (iPhone safe area aware) */
         #chat-circle {
             position: fixed;
-            bottom: max(16px, 3vh);
-            right: max(16px, 3vw);
+            bottom: max(16px, calc(3vh + env(safe-area-inset-bottom, 0px)));
+            right: max(16px, calc(3vw + env(safe-area-inset-right, 0px)));
             width: clamp(50px, 12vw, 60px);
             height: clamp(50px, 12vw, 60px);
             background-color: #ffffff;
@@ -38,6 +43,7 @@
             font-size: clamp(24px, 6vw, 28px);
             transition: all 0.2s ease;
             border: 1px solid #e5e7eb;
+            -webkit-tap-highlight-color: transparent;
         }
         #chat-circle:hover {
             background-color: #f9fafb;
@@ -45,35 +51,43 @@
         }
         #chat-circle:active {
             transform: scale(0.95);
+            background-color: #f3f4f6;
         }
 
-        /* Chat Window - BOTTOM RIGHT */
+        /* Chat Window - iPhone Optimized Full Screen */
         .chat-window {
             position: fixed;
-            bottom: max(16px, 2vh);
-            right: max(16px, 2vw);
-            width: min(300px, calc(100% - 32px));
-           max-height: 650px;
-            max-width: 300px;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            height: -webkit-fill-available; /* Fix for iOS Safari */
+            max-height: 100vh;
             background: white;
-            border-radius: clamp(16px, 5vw, 24px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
             display: none;
             flex-direction: column;
             z-index: 1001;
             overflow: hidden;
+            /* iPhone notch and home indicator safe areas */
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+            padding-left: env(safe-area-inset-left, 0px);
+            padding-right: env(safe-area-inset-right, 0px);
         }
 
-        /* Header - Responsive */
+        /* Header - iPhone Optimized */
         .chat-header {
             background: white;
-            padding: clamp(8px, 4vw, 10px) clamp(10px, 4vw, 22px);
+            padding: clamp(12px, 3vh, 16px) clamp(16px, 4vw, 22px);
+            padding-top: max(12px, env(safe-area-inset-top, 0px));
             border-bottom: 1px solid #e5e7eb;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
+            flex-shrink: 0; /* Prevent header from shrinking */
+            min-height: 60px;
         }
         .header-title {
             display: flex;
@@ -91,15 +105,24 @@
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
         }
         #chat-close {
             cursor: pointer;
-            font-size: 20px;
+            font-size: 24px;
             color: #9ca3af;
             transition: color 0.2s;
-            padding: 4px;
+            padding: 8px;
             line-height: 1;
+            -webkit-tap-highlight-color: transparent;
+            min-width: 44px; /* Apple's minimum touch target */
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #chat-close:active {
+            color: #4b5563;
         }
         #end-chat-btn {
             background: none;
@@ -107,54 +130,64 @@
             color: #ef4444;
             font-size: clamp(11px, 3.5vw, 12px);
             cursor: pointer;
-            padding: 6px 10px;
+            padding: 8px 12px;
             border-radius: 16px;
             transition: background 0.2s;
             white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
+            min-height: 44px;
         }
         #end-chat-btn:active {
             background: #fef2f2;
         }
 
-        /* Chat Body - Responsive */
+        /* Chat Body - iPhone Optimized Scrolling */
         .chat-body {
             flex-grow: 1;
             overflow-y: auto;
-            padding: clamp(12px, 4vw, 20px);
+            padding: clamp(16px, 4vw, 20px);
             background: #f9fafb;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            -webkit-overflow-scrolling: touch;
+            gap: 12px;
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            overscroll-behavior: contain; /* Prevent bounce on supported devices */
+            /* Prevent iOS rubber band effect issues */
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
         }
 
-        /* Messages - Responsive */
+        /* Messages - iPhone Optimized */
         .message.bot {
             align-self: flex-start;
             background: white;
             color: #1f2937;
-            padding: clamp(10px, 3vw, 12px) clamp(12px, 4vw, 16px);
+            padding: clamp(10px, 3vw, 12px) clamp(14px, 4vw, 16px);
             border-radius: 18px;
             border-bottom-left-radius: 4px;
-            max-width: 90%;
-            font-size: clamp(13px, 3.5vw, 14px);
+            max-width: 85%;
+            font-size: clamp(14px, 3.5vw, 15px); /* Slightly larger for readability */
             line-height: 1.5;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
             border: 1px solid #e5e7eb;
             white-space: pre-line;
             word-wrap: break-word;
+            -webkit-user-select: text;
+            user-select: text;
         }
         .message.user {
             align-self: flex-end;
             background: #6366f1;
             color: white;
-            padding: clamp(10px, 3vw, 12px) clamp(12px, 4vw, 16px);
+            padding: clamp(10px, 3vw, 12px) clamp(14px, 4vw, 16px);
             border-radius: 18px;
             border-bottom-right-radius: 4px;
             max-width: 85%;
-            font-size: clamp(13px, 3.5vw, 14px);
+            font-size: clamp(14px, 3.5vw, 15px);
             line-height: 1.5;
             word-wrap: break-word;
+            -webkit-user-select: text;
+            user-select: text;
         }
         .message.closing {
             align-self: flex-start;
@@ -163,7 +196,7 @@
             padding: 10px 14px;
             border-radius: 18px;
             border-bottom-left-radius: 4px;
-            font-size: 13px;
+            font-size: 14px;
             border-left: 3px solid #22c55e;
         }
         .message.confirmation {
@@ -173,7 +206,7 @@
             padding: 10px 14px;
             border-radius: 18px;
             border-bottom-left-radius: 4px;
-            font-size: 13px;
+            font-size: 14px;
             border-left: 3px solid #f59e0b;
         }
         .message.agent-connect {
@@ -183,7 +216,7 @@
             padding: 10px 14px;
             border-radius: 18px;
             border-bottom-left-radius: 4px;
-            font-size: 13px;
+            font-size: 14px;
             border-left: 3px solid #6366f1;
         }
 
@@ -197,44 +230,47 @@
         }
         .permit-state {
             font-weight: 700;
-            font-size: clamp(13px, 3.5vw, 15px);
+            font-size: clamp(14px, 3.5vw, 15px);
             margin-bottom: 8px;
             color: #1f2937;
             border-left: 3px solid #10b981;
             padding-left: 10px;
         }
         .permit-timeline {
-            font-size: clamp(12px, 3.5vw, 13px);
+            font-size: clamp(13px, 3.5vw, 14px);
             color: #374151;
             margin-bottom: 6px;
         }
         .permit-note {
-            font-size: 11px;
+            font-size: 12px;
             color: #6b7280;
             margin-top: 6px;
             padding-top: 6px;
             border-top: 1px solid #e5e7eb;
         }
 
-        /* Document Card Styles - Responsive */
+        /* Document Card Styles - iPhone Optimized */
         .document-card {
             background: white;
             border-radius: 12px;
-            padding: clamp(10px, 3vw, 12px) clamp(12px, 4vw, 14px);
+            padding: clamp(12px, 3vw, 14px);
             margin: 5px 0;
             border: 1px solid #e5e7eb;
             display: flex;
             align-items: center;
-            gap: clamp(8px, 3vw, 12px);
+            gap: clamp(10px, 3vw, 12px);
             transition: all 0.2s;
             flex-wrap: wrap;
         }
+        .document-card:active {
+            background: #f9fafb;
+        }
         .document-icon {
-            font-size: clamp(24px, 6vw, 28px);
+            font-size: clamp(28px, 6vw, 32px);
         }
         .document-info {
             flex: 1;
-            min-width: 120px;
+            min-width: 140px;
         }
         .document-title {
             font-weight: 600;
@@ -243,37 +279,41 @@
             margin-bottom: 4px;
         }
         .document-desc {
-            font-size: clamp(10px, 3vw, 11px);
+            font-size: clamp(11px, 3vw, 12px);
             color: #6b7280;
         }
         .document-link {
             background: #6366f1;
             color: white;
             text-decoration: none;
-            padding: 6px 14px;
+            padding: 10px 18px;
             border-radius: 20px;
-            font-size: clamp(11px, 3vw, 12px);
+            font-size: clamp(12px, 3vw, 13px);
             font-weight: 500;
             transition: background 0.2s;
             display: inline-block;
             white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
         }
         .document-link:active {
             background: #4f46e5;
             transform: scale(0.97);
         }
 
-        /* Adder Category Card - Responsive */
+        /* Adder Category Card - iPhone Optimized */
         .adder-category {
             background: white;
             border-radius: 12px;
-            padding: clamp(10px, 3vw, 12px);
+            padding: clamp(12px, 3vw, 14px);
             margin: 8px 0;
             border: 1px solid #e5e7eb;
         }
         .adder-category-title {
             font-weight: 700;
-            font-size: clamp(13px, 3.5vw, 14px);
+            font-size: clamp(14px, 3.5vw, 15px);
             margin-bottom: 10px;
             color: #1f2937;
             border-left: 3px solid #6366f1;
@@ -283,11 +323,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 6px 0;
+            padding: 8px 0;
             border-bottom: 1px solid #f3f4f6;
-            font-size: clamp(11px, 3vw, 12px);
+            font-size: clamp(12px, 3vw, 13px);
             flex-wrap: wrap;
             gap: 4px;
+            min-height: 44px; /* Touch-friendly height */
         }
         .adder-row:last-child {
             border-bottom: none;
@@ -301,7 +342,7 @@
             font-weight: 600;
         }
         .adder-note {
-            font-size: 10px;
+            font-size: 11px;
             color: #6b7280;
             margin-top: 8px;
             padding-top: 6px;
@@ -309,17 +350,17 @@
             text-align: center;
         }
 
-        /* Utility Card Styles - Responsive */
+        /* Utility Card Styles - iPhone Optimized */
         .utility-card {
             background: white;
             border-radius: 12px;
-            padding: clamp(10px, 3vw, 12px);
+            padding: clamp(12px, 3vw, 14px);
             margin: 8px 0;
             border: 1px solid #e5e7eb;
         }
         .utility-state {
             font-weight: 700;
-            font-size: clamp(13px, 3.5vw, 15px);
+            font-size: clamp(14px, 3.5vw, 15px);
             margin-bottom: 10px;
             color: #1f2937;
             border-left: 3px solid #6366f1;
@@ -328,28 +369,28 @@
         .utility-list {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 8px;
             margin-top: 5px;
         }
         .utility-tag {
             background: #f3f4f6;
-            padding: 4px 10px;
+            padding: 6px 12px;
             border-radius: 16px;
-            font-size: clamp(10px, 3vw, 11px);
+            font-size: clamp(11px, 3vw, 12px);
             color: #374151;
         }
 
-        /* Battery Card - Responsive */
+        /* Battery Card - iPhone Optimized */
         .battery-card {
             background: white;
             border-radius: 14px;
-            padding: clamp(10px, 3vw, 12px);
+            padding: clamp(12px, 3vw, 14px);
             margin-top: 5px;
             border: 1px solid #e5e7eb;
         }
         .battery-lender {
             font-weight: 700;
-            font-size: clamp(12px, 3.5vw, 14px);
+            font-size: clamp(13px, 3.5vw, 14px);
             margin-bottom: 8px;
             color: #1f2937;
             border-left: 3px solid #6366f1;
@@ -358,82 +399,100 @@
         .battery-list {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 8px;
             margin-top: 5px;
         }
         .battery-item {
             background: #f3f4f6;
-            padding: 4px 10px;
+            padding: 6px 12px;
             border-radius: 20px;
-            font-size: clamp(10px, 3vw, 12px);
+            font-size: clamp(11px, 3vw, 12px);
             color: #374151;
         }
 
-        /* Quick Reply Buttons - Touch Friendly */
+        /* Quick Reply Buttons - iPhone Touch Friendly */
         .quick-replies {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
             margin-top: 8px;
             margin-bottom: 8px;
+            padding: 4px 0;
         }
         .quick-btn {
             background: white;
             border: 1px solid #e5e7eb;
             color: #4f46e5;
-            padding: clamp(8px, 3vw, 10px) clamp(12px, 4vw, 16px);
+            padding: clamp(10px, 3vw, 12px) clamp(14px, 4vw, 18px);
             border-radius: 30px;
-            font-size: clamp(11px, 3.5vw, 13px);
+            font-size: clamp(12px, 3.5vw, 14px);
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-            min-height: 40px;
+            min-height: 44px; /* Apple's minimum touch target */
             white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .quick-btn:active {
             transform: scale(0.97);
             background: #eef2ff;
+            border-color: #6366f1;
         }
 
-        /* Footer Input - Touch Friendly */
+        /* Footer Input - iPhone Optimized */
         .chat-footer {
             display: flex;
-            padding: clamp(10px, 3vw, 12px) clamp(12px, 4vw, 16px);
+            padding: clamp(12px, 3vh, 16px) clamp(16px, 4vw, 20px);
+            padding-bottom: max(12px, env(safe-area-inset-bottom, 16px));
             border-top: 1px solid #e5e7eb;
             background: white;
-            gap: 8px;
+            gap: 10px;
             align-items: center;
+            flex-shrink: 0; /* Prevent footer from shrinking */
+            min-height: 60px;
         }
         #chat-input {
             flex-grow: 1;
-            padding: clamp(10px, 3vw, 12px) clamp(12px, 4vw, 14px);
+            padding: clamp(12px, 3vw, 14px) clamp(14px, 4vw, 16px);
             border: 1px solid #e5e7eb;
             border-radius: 30px;
             outline: none;
-            font-size: clamp(14px, 4vw, 16px);
+            font-size: 16px; /* Prevent iOS zoom on focus */
             font-family: inherit;
             transition: border 0.2s;
             min-height: 44px;
+            -webkit-appearance: none; /* Remove iOS default styling */
+            appearance: none;
+            background: #f9fafb;
         }
         #chat-input:focus {
             border-color: #6366f1;
+            background: white;
         }
         #send-btn {
             background: #6366f1;
             color: white;
             border: none;
             border-radius: 30px;
-            padding: clamp(5px, 3vw, 7px) clamp(16px, 5vw, 20px);
+            padding: clamp(5px, 3vw, 7px) clamp(18px, 5vw, 22px);
             cursor: pointer;
-            font-weight: 500;
-            font-size: clamp(13px, 3.5vw, 14px);
+            font-weight: 600;
+            font-size: clamp(14px, 3.5vw, 15px);
             transition: background 0.2s;
             min-height: 44px;
             white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         #send-btn:active {
             transform: scale(0.97);
+            background: #4f46e5;
         }
         #send-btn:disabled {
             background: #cbd5e1;
@@ -445,16 +504,16 @@
         .typing-indicator {
             align-self: flex-start;
             background: white;
-            padding: 10px 16px;
+            padding: 12px 18px;
             border-radius: 18px;
             border-bottom-left-radius: 4px;
             border: 1px solid #e5e7eb;
             display: flex;
-            gap: 4px;
+            gap: 5px;
         }
         .typing-indicator span {
-            width: 6px;
-            height: 6px;
+            width: 7px;
+            height: 7px;
             background: #9ca3af;
             border-radius: 50%;
             animation: typing 1.4s infinite ease-in-out;
@@ -465,7 +524,7 @@
 
         @keyframes typing {
             0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-            30% { transform: translateY(-6px); opacity: 1; }
+            30% { transform: translateY(-8px); opacity: 1; }
         }
 
         /* Powered by */
@@ -476,45 +535,38 @@
             color: #9ca3af;
             background: white;
             border-top: 1px solid #f3f4f6;
+            flex-shrink: 0;
         }
 
-        /* Tablet Specific Adjustments */
-        @media (min-width: 768px) and (max-width: 1024px) {
-            .chat-window {
-                width: 400px;
-                height: 600px;
+        /* iPhone-specific styles */
+        /* iPhone SE, 6, 7, 8 */
+        @media only screen and (max-width: 375px) {
+            .chat-header {
+                padding: 10px 12px;
+                min-height: 56px;
+            }
+            .chat-footer {
+                padding: 10px 12px;
+                padding-bottom: max(10px, env(safe-area-inset-bottom, 12px));
+                gap: 8px;
+                min-height: 56px;
             }
             .quick-btn {
-                white-space: normal;
-                text-align: center;
-            }
-        }
-
-        /* Small Mobile Adjustments */
-        @media (max-width: 550px) {
-            .chat-window {
-                width: 510px;
-                right: 10px;
-                bottom: 10px;
-                height: 500px;
-                border-radius: 20px;
-            }
-            .quick-replies {
-                gap: 6px;
-            }
-            .quick-btn {
-                white-space: normal;
-                text-align: center;
+                font-size: 11px;
+                padding: 8px 12px;
+                min-height: 40px;
                 flex: 1 0 auto;
                 min-width: calc(50% - 6px);
-            }
-            .document-card {
-                flex-wrap: wrap;
-            }
-            .document-link {
                 white-space: normal;
                 text-align: center;
+            }
+            .document-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .document-link {
                 width: 100%;
+                justify-content: center;
             }
             .document-info {
                 min-width: 100%;
@@ -522,10 +574,86 @@
             .adder-row {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 4px;
+                gap: 6px;
             }
-            .header-title span:last-child {
-                font-size: 16px;
+            #chat-input {
+                font-size: 16px; /* Prevent zoom */
+                padding: 10px 14px;
+            }
+        }
+
+        /* iPhone X, XS, 11 Pro, 12 Mini, 13 Mini */
+        @media only screen and (max-width: 375px) and (min-height: 812px) {
+            .chat-window {
+                border-radius: 0;
+            }
+            .chat-header {
+                padding-top: max(12px, env(safe-area-inset-top, 44px));
+            }
+            .chat-footer {
+                padding-bottom: max(12px, env(safe-area-inset-bottom, 34px));
+            }
+        }
+
+        /* iPhone 12, 12 Pro, 13, 13 Pro, 14 */
+        @media only screen and (min-width: 376px) and (max-width: 428px) {
+            .chat-header {
+                padding: 14px 16px;
+            }
+            .chat-footer {
+                padding: 12px 16px;
+                padding-bottom: max(12px, env(safe-area-inset-bottom, 16px));
+            }
+            .quick-btn {
+                font-size: 12px;
+                padding: 10px 14px;
+                min-height: 42px;
+                flex: 1 0 auto;
+                min-width: calc(50% - 6px);
+                white-space: normal;
+                text-align: center;
+            }
+        }
+
+        /* iPhone 12 Pro Max, 13 Pro Max, 14 Plus, 14 Pro Max */
+        @media only screen and (min-width: 429px) and (max-width: 550px) {
+            .chat-window {
+                max-width: 430px;
+                border-radius: 20px;
+                top: auto;
+                bottom: max(16px, env(safe-area-inset-bottom, 20px));
+                right: max(16px, env(safe-area-inset-right, 20px));
+                height: 90vh;
+            }
+            .chat-header {
+                border-radius: 20px 20px 0 0;
+                padding-top: 14px;
+            }
+            .quick-btn {
+                font-size: 13px;
+                padding: 10px 16px;
+                white-space: normal;
+                text-align: center;
+            }
+        }
+
+        /* iPad and larger tablets */
+        @media only screen and (min-width: 768px) {
+            .chat-window {
+                position: fixed;
+                top: auto;
+                bottom: max(16px, env(safe-area-inset-bottom, 20px));
+                right: max(16px, env(safe-area-inset-right, 20px));
+                width: 420px;
+                height: 650px;
+                border-radius: 24px;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            }
+            .chat-header {
+                border-radius: 24px 24px 0 0;
+            }
+            .quick-btn {
+                white-space: nowrap;
             }
         }
 
@@ -533,64 +661,15 @@
         @media (min-width: 1200px) {
             .chat-window {
                 width: 420px;
-                height: 650px;
-            }
-                    /* Chatbot mobile responsiveness */
-        @media (max-width: 768px) {
-            .chat-window {
-                width: calc(100% - 20px);
-                right: 10px;
-                bottom: 10px;
-                height: calc(100vh - 100px);
-                border-radius: 16px;
-            }
-            .quick-replies {
-                gap: 6px;
-            }
-            .quick-btn {
-                font-size: 11px;
-                padding: 8px 12px;
-                white-space: normal;
-                text-align: center;
-            }
-            .chat-header {
-                padding: 12px 16px;
-            }
-            .header-title span:last-child {
-                font-size: 14px;
-            }
-            .chat-body {
-                padding: 12px;
-            }
-            .message.bot, .message.user {
-                font-size: 13px;
-                padding: 8px 12px;
+                height: 700px;
             }
         }
-        
-        @media (max-width: 480px) {
-            .quick-btn {
-                flex: 1 0 auto;
-                min-width: calc(50% - 6px);
-                font-size: 10px;
-                padding: 6px 10px;
+
+        /* Fix for iOS input zoom */
+        @supports (-webkit-touch-callout: none) {
+            input, textarea, select {
+                font-size: 16px !important;
             }
-            .document-card {
-                flex-wrap: wrap;
-            }
-            .document-link {
-                width: 100%;
-                text-align: center;
-            }
-            .document-info {
-                min-width: 100%;
-            }
-            .adder-row {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 4px;
-            }
-        }
         }
     </style>
 </head>
@@ -611,7 +690,7 @@
     </div>
     <div class="chat-body" id="chat-body"></div>
     <div class="chat-footer">
-        <input type="text" id="chat-input" placeholder="Ask me anything...">
+        <input type="text" id="chat-input" placeholder="Ask me anything..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
         <button id="send-btn">Send</button>
     </div>
     <div class="powered-by">
@@ -650,6 +729,26 @@
     // State
     let isChatActive = true;
     let pendingEndConfirmation = false;
+
+    // ========== iPhone Viewport Height Fix ==========
+    function setViewportHeight() {
+        // Fix for iOS Safari 100vh issue
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    
+    window.addEventListener('resize', setViewportHeight);
+    window.addEventListener('orientationchange', setViewportHeight);
+    setViewportHeight();
+
+    // ========== Prevent iOS Bounce/Rubber-band Effect ==========
+    document.body.addEventListener('touchmove', function(e) {
+        if (e.target === chatBody || chatBody.contains(e.target)) {
+            // Allow scrolling within chat body
+            return;
+        }
+        // Prevent default only if not in chat body
+    }, { passive: false });
 
     // ========== Tawk.to Live Chat Integration ==========
     function connectToLiveAgent() {
@@ -1050,6 +1149,10 @@
         chatWindow.style.display = 'flex';
         circle.style.display = 'none';
         notifyParent('chatbot-open');
+        // Focus input after transition
+        setTimeout(() => {
+            chatInput.focus();
+        }, 300);
     });
     closeBtn.addEventListener('click', () => {
         chatWindow.style.display = 'none';
@@ -1234,90 +1337,6 @@
         }
 
         return "I can help with:\n\n• Equipment combos by lender\n• Financing options\n• Market availability (FL, MD, NJ)\n• Permit timelines by state\n• Battery adders and pricing\n• Installation adders (roof mounts, trenching, panel upgrades)\n• Roofing and insulation pricing\n• A/C heat pumps and energy efficiency\n• Downloadable documents\n• Connecting you to a live agent\n• Contacting Sales Support\n\nWhat would you like to know?";
-                // ========== ADDITIONAL RESPONSE PATTERNS ==========
-        
-        // Welcome/Greeting responses
-        if (q === 'hi' || q === 'hello' || q === 'hey' || q === 'greetings') {
-            return "Hello! 👋 I'm the EHX Dealer Assistant. I can help with financing options, equipment specs, adder pricing, permit timelines, and more. What can I help you with today?";
-        }
-        
-        // Small talk responses
-        if (q.includes('how are you') || q.includes('how are you doing')) {
-            return "I'm doing great, thanks for asking! Ready to help you with any dealer questions. What can I assist you with today?";
-        }
-        
-        if (q.includes('what can you do') || q.includes('help me with') || q.includes('capabilities')) {
-            return "I can help you with:\n\n• Financing options (LightReach, GoodLeap, Skylight, Loans)\n• Equipment specs and combos\n• Adder pricing (batteries, installation, roofing)\n• Permit timelines by state\n• Utility information by state\n• Downloading documents and cheat sheets\n• Contacting sales support\n\nWhat would you like to know?";
-        }
-        
-        if (q.includes('thank') || q.includes('thanks') || q.includes('appreciate')) {
-            return "You're very welcome! 😊 Is there anything else I can help you with?";
-        }
-        
-        // Market availability questions
-        if (q.includes('what markets') || q.includes('available markets') || q.includes('which states')) {
-            return "📍 Active Markets:\n\n• Florida (14 utilities, 3 lenders)\n• Maryland (14 utilities, 3 lenders)\n• New Jersey (4 utilities, 4 lenders)\n\n🚀 Coming Soon:\n• New York\n• Georgia\n\nWhich market would you like more details about?";
-        }
-        
-        // Lender-specific equipment questions
-        if (q.includes('lightreach equipment') || (q.includes('lightreach') && q.includes('panel'))) {
-            return "🔹 Palmetto LightReach Equipment:\n\n• Module: SIRIUS 450W\n• Inverter: IQ8HC Microinverter\n• Batteries: Enphase IQ5P / Tesla Powerwall 3\n• Markets: FL, MD, NJ";
-        }
-        
-        if (q.includes('goodleap equipment') || (q.includes('goodleap') && q.includes('panel'))) {
-            return "🔹 GoodLeap Equipment:\n\n• Module: APTOS 410W\n• Inverter: IQ8HC Microinverter\n• Batteries: Enphase IQ5P / Tesla Powerwall 3\n• Markets: MD, NJ (NOT Florida)";
-        }
-        
-        if (q.includes('skylight equipment') || (q.includes('skylight') && q.includes('panel'))) {
-            return "🔹 Skylight Lending Equipment:\n\n• Module: SIRIUS 450W\n• Inverter: IQ8HC Microinverter\n• Batteries: Enphase IQ5P / Tesla Powerwall 3\n• Markets: FL, NJ (NOT Maryland)";
-        }
-        
-        // Battery-specific pricing
-        if (q.includes('enphase') || q.includes('iq5p')) {
-            return "🔋 Enphase IQ 5P Battery:\n\n• Price: $8,500/unit\n• Additional stack: $5,000/unit\n• Compatible with all lenders\n• Need installation adders too? Ask me about installation pricing!";
-        }
-        
-        if (q.includes('tesla') || q.includes('powerwall')) {
-            return "🔋 Tesla Powerwall 3:\n\n• Price: $14,000/unit\n• Capacity: 13.5KW\n• Compatible with all lenders\n• Ask me about battery availability by lender!";
-        }
-        
-        if (q.includes('franklin') || q.includes('apower2')) {
-            return "🔋 Franklin aPower2 Battery:\n\n• Price: $16,250/unit\n• Compatible with Loans & Cash, GoodLeap Loan\n• High-quality storage solution";
-        }
-        
-        // Installation-specific questions
-        if (q.includes('panel upgrade') || q.includes('main panel')) {
-            return "🛠️ Main Panel Upgrade: $3,500.00\n\nThis is required when the existing electrical panel cannot support the solar installation. Ask me about other installation adders!";
-        }
-        
-        if (q.includes('trenching')) {
-            return "🛠️ Trenching:\n\n• Standard: $12.00/ft\n• Concrete: $25.00/ft\n\nRequired for ground mount systems or when running conduit underground.";
-        }
-        
-        // Document shortcut
-        if (q.includes('adder sheet') || (q.includes('adder') && q.includes('download'))) {
-            return "📄 You can download the Complete Adder Sheet here:\nhttps://drive.google.com/uc?export=download&id=1RVdBgjyrDwDtR4Vw7gHCXScKKBr2EI8T\n\nOr click the 'Show me documents' button for all available resources.";
-        }
-        
-        // Florida specific
-        if (q.includes('florida utilities') || (q.includes('fl') && q.includes('utility'))) {
-            return "Florida has 14 approved utilities for LightReach including:\n\n• Duke Energy\n• Florida Power & Light (FPL)\n• Tampa Electric (TECO)\n• Orlando Utilities Commission (OUC)\n• Kissimmee Utility Authority (KUA)\n\nPlus 9 more! Ask me to 'Show me utilities' for the complete list.";
-        }
-        
-        // Maryland specific
-        if (q.includes('maryland utilities') || (q.includes('md') && q.includes('utility'))) {
-            return "Maryland has 14 approved utilities for LightReach, sharing the same utility list as Florida!\n\nTop utilities include Duke Energy, FPL, and TECO.";
-        }
-        
-        // New Jersey specific
-        if (q.includes('new jersey utilities') || (q.includes('nj') && q.includes('utility'))) {
-            return "New Jersey has 4 approved utilities:\n\n• PSE&G\n• Atlantic City Electric (ACE)\n• Jersey Central Power & Light (JCP&L)\n• Rockland Electric Co (RECO)";
-        }
-        
-        // Salary/commission questions (if relevant)
-        if (q.includes('commission') || q.includes('pay') || q.includes('salary') || q.includes('earn')) {
-            return "💰 For commission structures, pay rates, and compensation questions, please contact your sales manager or HR representative directly. The EHX Dealer Assistant focuses on technical and operational support.";
-        }
     }
 
     async function sendMessage(userMessage = null) {
@@ -1419,6 +1438,13 @@
     sendBtn.addEventListener('click', () => sendMessage());
     chatInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') sendMessage();
+    });
+
+    // Prevent iOS keyboard issues
+    chatInput.addEventListener('focus', () => {
+        setTimeout(() => {
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }, 300);
     });
 
     fullResetChat();
