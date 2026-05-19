@@ -245,24 +245,43 @@
             display: block;
         }
         
-        /* Chat Widget Container */
+        /* ========== UNIFORM CHAT WIDGET STYLES ========== */
         .chat-widget-container {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 24px;
+            bottom: max(24px, env(safe-area-inset-bottom, 24px));
+            right: 24px;
+            right: max(24px, env(safe-area-inset-right, 24px));
             z-index: 999;
-            width: 380px;
-            height: 450px;
+            width: auto;
+            height: auto;
             pointer-events: none;
         }
-        
+
         .chat-widget-container iframe {
-            pointer-events: auto;
-            width: 100%;
-            height: 100%;
+            width: 80px;
+            height: 80px;
             border: none;
             background: transparent;
-            border-radius: 20px;
+            pointer-events: auto;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 550px) {
+            .chat-widget-container {
+                bottom: 16px;
+                right: 16px;
+            }
+        }
+
+        /* Desktop */
+        @media (min-width: 1200px) {
+            .chat-widget-container {
+                bottom: 32px;
+                right: 32px;
+            }
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
@@ -452,17 +471,29 @@
 
     <iframe src="components/footer.html" class="footer-iframe" id="footerIframe" scrolling="no"></iframe>
 
+    <!-- Chat Widget - UNIFORM -->
     <div class="chat-widget-container">
         <iframe 
             id="chatbotIframe"
             src="components/chatbot.html"
-            style="position: fixed; bottom: 16px; right: 16px; width: 80px; height: 80px; border: none; background: transparent; z-index: 9999; overflow: visible;">
+            style="
+                position: fixed;
+                bottom: 24px;
+                right: 24px;
+                width: 80px;
+                height: 80px;
+                border: none;
+                background: transparent;
+                z-index: 9999;
+                overflow: visible;
+            ">
         </iframe>
     </div>
 
     <script>
-        // Handle header and footer height adjustments
+        // Handle messages from iframes
         window.addEventListener('message', function(event) {
+            // Header height adjustment
             if (event.data.type === 'headerHeight') {
                 const headerIframe = document.getElementById('headerIframe');
                 if (headerIframe) {
@@ -470,34 +501,53 @@
                 }
             }
             
+            // Footer height adjustment
             if (event.data.type === 'footerHeight') {
                 const footerIframe = document.getElementById('footerIframe');
                 if (footerIframe) {
                     footerIframe.style.height = event.data.height + 'px';
                 }
             }
-        });
-        
-        // Handle chatbot iframe resizing
-        window.addEventListener('message', function(event) {
-            const iframe = document.getElementById('chatbotIframe');
 
-            if (!iframe || !event.data || !event.data.type) return;
+            // Chatbot open/close - UNIFORM SIZING
+            const chatbotIframe = document.getElementById('chatbotIframe');
+            if (!chatbotIframe || !event.data || !event.data.type) return;
 
             if (event.data.type === 'chatbot-open') {
-                iframe.style.width = '430px';
-                iframe.style.height = '620px';
-                iframe.style.top = 'auto';
-                iframe.style.bottom = '16px';
-                iframe.style.right = '16px';
+                chatbotIframe.style.width = '380px';
+                chatbotIframe.style.height = '600px';
+                chatbotIframe.style.borderRadius = '16px';
+                chatbotIframe.style.bottom = '24px';
+                chatbotIframe.style.right = '24px';
+                chatbotIframe.style.top = 'auto';
+                chatbotIframe.style.left = 'auto';
+                
+                // Mobile adjustments
+                if (window.innerWidth <= 550) {
+                    chatbotIframe.style.width = 'calc(100vw - 32px)';
+                    chatbotIframe.style.height = 'calc(100vh - 32px)';
+                    chatbotIframe.style.maxHeight = '600px';
+                    chatbotIframe.style.bottom = '16px';
+                    chatbotIframe.style.right = '16px';
+                }
+                
+                // Desktop adjustments
+                if (window.innerWidth >= 1200) {
+                    chatbotIframe.style.width = '400px';
+                    chatbotIframe.style.height = '650px';
+                    chatbotIframe.style.bottom = '32px';
+                    chatbotIframe.style.right = '32px';
+                }
             }
 
             if (event.data.type === 'chatbot-closed') {
-                iframe.style.width = '80px';
-                iframe.style.height = '80px';
-                iframe.style.top = 'auto';
-                iframe.style.bottom = '16px';
-                iframe.style.right = '16px';
+                chatbotIframe.style.width = '80px';
+                chatbotIframe.style.height = '80px';
+                chatbotIframe.style.borderRadius = '50%';
+                chatbotIframe.style.bottom = '24px';
+                chatbotIframe.style.right = '24px';
+                chatbotIframe.style.top = 'auto';
+                chatbotIframe.style.left = 'auto';
             }
         });
     </script>
