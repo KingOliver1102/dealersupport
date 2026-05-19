@@ -16,21 +16,23 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
             background: transparent;
             min-height: 100vh;
-            min-height: -webkit-fill-available; /* Fix for iOS Safari */
+            min-height: -webkit-fill-available;
             overflow: visible;
-            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on iPhone */
-            -webkit-touch-callout: none; /* Prevent callout on long press */
-            -webkit-user-select: none; /* Prevent text selection */
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
             user-select: none;
         }
 
-        /* Floating Button - BOTTOM RIGHT (iPhone safe area aware) */
+        /* Floating Button - Professional Right Position */
         #chat-circle {
             position: fixed;
-            bottom: max(16px, calc(3vh + env(safe-area-inset-bottom, 0px)));
-            right: max(16px, calc(3vw + env(safe-area-inset-right, 0px)));
-            width: clamp(50px, 12vw, 60px);
-            height: clamp(50px, 12vw, 60px);
+            bottom: 24px;
+            bottom: max(24px, calc(3vh + env(safe-area-inset-bottom, 0px)));
+            right: 24px;
+            right: max(24px, calc(3vw + env(safe-area-inset-right, 0px)));
+            width: 60px;
+            height: 60px;
             background-color: #ffffff;
             color: #6366f1;
             border-radius: 50%;
@@ -38,9 +40,9 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
             z-index: 1000;
-            font-size: clamp(24px, 6vw, 28px);
+            font-size: 28px;
             transition: all 0.2s ease;
             border: 1px solid #e5e7eb;
             -webkit-tap-highlight-color: transparent;
@@ -48,59 +50,57 @@
         #chat-circle:hover {
             background-color: #f9fafb;
             transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
         }
         #chat-circle:active {
             transform: scale(0.95);
             background-color: #f3f4f6;
         }
 
-        /* Chat Window - iPhone Optimized Full Screen */
+        /* Chat Window - Professional Right Position */
         .chat-window {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            width: 80%;
-            height: 80%;
-            height: -webkit-fill-available; /* Fix for iOS Safari */
-            max-height: 100vh;
+            bottom: 24px;
+            bottom: max(24px, env(safe-area-inset-bottom, 24px));
+            right: 24px;
+            right: max(24px, env(safe-area-inset-right, 24px));
+            width: 380px;
+            height: 600px;
+            max-height: calc(100vh - 48px);
+            max-height: calc(100vh - max(48px, env(safe-area-inset-bottom, 24px) + 24px));
             background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
             display: none;
             flex-direction: column;
             z-index: 1001;
             overflow: hidden;
-            /* iPhone notch and home indicator safe areas */
-            padding-top: env(safe-area-inset-top, 0px);
-            padding-bottom: env(safe-area-inset-bottom, 0px);
-            padding-left: env(safe-area-inset-left, 0px);
-            padding-right: env(safe-area-inset-right, 0px);
         }
 
-        /* Header - iPhone Optimized */
+        /* Header - Professional Styling */
         .chat-header {
-            background: white;
-            padding: clamp(12px, 3vh, 16px) clamp(16px, 4vw, 22px);
-            padding-top: max(12px, env(safe-area-inset-top, 0px));
-            border-bottom: 1px solid #e5e7eb;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            padding: 16px 20px;
+            border-bottom: none;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-shrink: 0; /* Prevent header from shrinking */
-            min-height: 60px;
+            flex-shrink: 0;
+            min-height: 64px;
         }
         .header-title {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
         .header-title span:first-child {
-            font-size: clamp(20px, 5vw, 24px);
+            font-size: 24px;
         }
         .header-title span:last-child {
             font-weight: 600;
-            font-size: clamp(14px, 4vw, 18px);
-            color: #1f2937;
+            font-size: 16px;
+            color: white;
+            letter-spacing: -0.2px;
         }
         .header-actions {
             display: flex;
@@ -109,66 +109,68 @@
         }
         #chat-close {
             cursor: pointer;
-            font-size: 24px;
-            color: #9ca3af;
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.8);
             transition: color 0.2s;
-            padding: 8px;
+            padding: 6px;
             line-height: 1;
             -webkit-tap-highlight-color: transparent;
-            min-width: 44px; /* Apple's minimum touch target */
-            min-height: 44px;
+            min-width: 36px;
+            min-height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
+            border-radius: 8px;
         }
-        #chat-close:active {
-            color: #4b5563;
+        #chat-close:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
         }
         #end-chat-btn {
-            background: none;
-            border: none;
-            color: #ef4444;
-            font-size: clamp(11px, 3.5vw, 12px);
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 12px;
             cursor: pointer;
-            padding: 8px 12px;
-            border-radius: 16px;
-            transition: background 0.2s;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: all 0.2s;
             white-space: nowrap;
             -webkit-tap-highlight-color: transparent;
-            min-height: 44px;
+            min-height: 36px;
+            font-weight: 500;
         }
-        #end-chat-btn:active {
-            background: #fef2f2;
+        #end-chat-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
         }
 
-        /* Chat Body - iPhone Optimized Scrolling */
+        /* Chat Body */
         .chat-body {
             flex-grow: 1;
             overflow-y: auto;
-            padding: clamp(16px, 4vw, 20px);
+            padding: 20px;
             background: #f9fafb;
             display: flex;
             flex-direction: column;
             gap: 12px;
-            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-            overscroll-behavior: contain; /* Prevent bounce on supported devices */
-            /* Prevent iOS rubber band effect issues */
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
             -webkit-transform: translateZ(0);
             transform: translateZ(0);
         }
 
-        /* Messages - iPhone Optimized */
+        /* Messages - Professional Styling */
         .message.bot {
             align-self: flex-start;
             background: white;
             color: #1f2937;
-            padding: clamp(10px, 3vw, 12px) clamp(14px, 4vw, 16px);
-            border-radius: 18px;
+            padding: 12px 16px;
+            border-radius: 16px;
             border-bottom-left-radius: 4px;
             max-width: 85%;
-            font-size: clamp(14px, 3.5vw, 15px); /* Slightly larger for readability */
+            font-size: 14px;
             line-height: 1.5;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
             border: 1px solid #e5e7eb;
             white-space: pre-line;
             word-wrap: break-word;
@@ -179,24 +181,25 @@
             align-self: flex-end;
             background: #6366f1;
             color: white;
-            padding: clamp(10px, 3vw, 12px) clamp(14px, 4vw, 16px);
-            border-radius: 18px;
+            padding: 12px 16px;
+            border-radius: 16px;
             border-bottom-right-radius: 4px;
             max-width: 85%;
-            font-size: clamp(14px, 3.5vw, 15px);
+            font-size: 14px;
             line-height: 1.5;
             word-wrap: break-word;
             -webkit-user-select: text;
             user-select: text;
+            box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3);
         }
         .message.closing {
             align-self: flex-start;
             background: #dcfce7;
             color: #166534;
             padding: 10px 14px;
-            border-radius: 18px;
+            border-radius: 16px;
             border-bottom-left-radius: 4px;
-            font-size: 14px;
+            font-size: 13px;
             border-left: 3px solid #22c55e;
         }
         .message.confirmation {
@@ -204,9 +207,9 @@
             background: #fef3c7;
             color: #92400e;
             padding: 10px 14px;
-            border-radius: 18px;
+            border-radius: 16px;
             border-bottom-left-radius: 4px;
-            font-size: 14px;
+            font-size: 13px;
             border-left: 3px solid #f59e0b;
         }
         .message.agent-connect {
@@ -214,51 +217,49 @@
             background: #e0e7ff;
             color: #3730a3;
             padding: 10px 14px;
-            border-radius: 18px;
+            border-radius: 16px;
             border-bottom-left-radius: 4px;
-            font-size: 14px;
+            font-size: 13px;
             border-left: 3px solid #6366f1;
         }
 
-        /* Permit Card Styles */
+        /* Cards & Content Styles (keeping all your existing styles) */
         .permit-card {
             background: white;
             border-radius: 12px;
-            padding: clamp(10px, 3vw, 12px);
+            padding: 12px;
             margin: 8px 0;
             border: 1px solid #e5e7eb;
         }
         .permit-state {
             font-weight: 700;
-            font-size: clamp(14px, 3.5vw, 15px);
+            font-size: 14px;
             margin-bottom: 8px;
             color: #1f2937;
             border-left: 3px solid #10b981;
             padding-left: 10px;
         }
         .permit-timeline {
-            font-size: clamp(13px, 3.5vw, 14px);
+            font-size: 13px;
             color: #374151;
             margin-bottom: 6px;
         }
         .permit-note {
-            font-size: 12px;
+            font-size: 11px;
             color: #6b7280;
             margin-top: 6px;
             padding-top: 6px;
             border-top: 1px solid #e5e7eb;
         }
-
-        /* Document Card Styles - iPhone Optimized */
         .document-card {
             background: white;
             border-radius: 12px;
-            padding: clamp(12px, 3vw, 14px);
+            padding: 12px 14px;
             margin: 5px 0;
             border: 1px solid #e5e7eb;
             display: flex;
             align-items: center;
-            gap: clamp(10px, 3vw, 12px);
+            gap: 10px;
             transition: all 0.2s;
             flex-wrap: wrap;
         }
@@ -266,7 +267,7 @@
             background: #f9fafb;
         }
         .document-icon {
-            font-size: clamp(28px, 6vw, 32px);
+            font-size: 28px;
         }
         .document-info {
             flex: 1;
@@ -274,27 +275,27 @@
         }
         .document-title {
             font-weight: 600;
-            font-size: clamp(13px, 3.5vw, 14px);
+            font-size: 13px;
             color: #1f2937;
             margin-bottom: 4px;
         }
         .document-desc {
-            font-size: clamp(11px, 3vw, 12px);
+            font-size: 11px;
             color: #6b7280;
         }
         .document-link {
             background: #6366f1;
             color: white;
             text-decoration: none;
-            padding: 10px 18px;
+            padding: 8px 16px;
             border-radius: 20px;
-            font-size: clamp(12px, 3vw, 13px);
+            font-size: 12px;
             font-weight: 500;
             transition: background 0.2s;
             display: inline-block;
             white-space: nowrap;
             -webkit-tap-highlight-color: transparent;
-            min-height: 44px;
+            min-height: 40px;
             display: flex;
             align-items: center;
         }
@@ -302,18 +303,16 @@
             background: #4f46e5;
             transform: scale(0.97);
         }
-
-        /* Adder Category Card - iPhone Optimized */
         .adder-category {
             background: white;
             border-radius: 12px;
-            padding: clamp(12px, 3vw, 14px);
+            padding: 12px 14px;
             margin: 8px 0;
             border: 1px solid #e5e7eb;
         }
         .adder-category-title {
             font-weight: 700;
-            font-size: clamp(14px, 3.5vw, 15px);
+            font-size: 14px;
             margin-bottom: 10px;
             color: #1f2937;
             border-left: 3px solid #6366f1;
@@ -325,10 +324,10 @@
             align-items: center;
             padding: 8px 0;
             border-bottom: 1px solid #f3f4f6;
-            font-size: clamp(12px, 3vw, 13px);
+            font-size: 12px;
             flex-wrap: wrap;
             gap: 4px;
-            min-height: 44px; /* Touch-friendly height */
+            min-height: 40px;
         }
         .adder-row:last-child {
             border-bottom: none;
@@ -342,25 +341,23 @@
             font-weight: 600;
         }
         .adder-note {
-            font-size: 11px;
+            font-size: 10px;
             color: #6b7280;
             margin-top: 8px;
             padding-top: 6px;
             border-top: 1px solid #e5e7eb;
             text-align: center;
         }
-
-        /* Utility Card Styles - iPhone Optimized */
         .utility-card {
             background: white;
             border-radius: 12px;
-            padding: clamp(12px, 3vw, 14px);
+            padding: 12px 14px;
             margin: 8px 0;
             border: 1px solid #e5e7eb;
         }
         .utility-state {
             font-weight: 700;
-            font-size: clamp(14px, 3.5vw, 15px);
+            font-size: 14px;
             margin-bottom: 10px;
             color: #1f2937;
             border-left: 3px solid #6366f1;
@@ -369,28 +366,26 @@
         .utility-list {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 6px;
             margin-top: 5px;
         }
         .utility-tag {
             background: #f3f4f6;
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 16px;
-            font-size: clamp(11px, 3vw, 12px);
+            font-size: 11px;
             color: #374151;
         }
-
-        /* Battery Card - iPhone Optimized */
         .battery-card {
             background: white;
             border-radius: 14px;
-            padding: clamp(12px, 3vw, 14px);
+            padding: 12px 14px;
             margin-top: 5px;
             border: 1px solid #e5e7eb;
         }
         .battery-lender {
             font-weight: 700;
-            font-size: clamp(13px, 3.5vw, 14px);
+            font-size: 13px;
             margin-bottom: 8px;
             color: #1f2937;
             border-left: 3px solid #6366f1;
@@ -399,18 +394,18 @@
         .battery-list {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 6px;
             margin-top: 5px;
         }
         .battery-item {
             background: #f3f4f6;
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 20px;
-            font-size: clamp(11px, 3vw, 12px);
+            font-size: 11px;
             color: #374151;
         }
 
-        /* Quick Reply Buttons - iPhone Touch Friendly */
+        /* Quick Reply Buttons */
         .quick-replies {
             display: flex;
             flex-wrap: wrap;
@@ -423,66 +418,69 @@
             background: white;
             border: 1px solid #e5e7eb;
             color: #4f46e5;
-            padding: clamp(10px, 3vw, 12px) clamp(14px, 4vw, 18px);
-            border-radius: 30px;
-            font-size: clamp(12px, 3.5vw, 14px);
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-            min-height: 44px; /* Apple's minimum touch target */
+            min-height: 40px;
             white-space: nowrap;
             -webkit-tap-highlight-color: transparent;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        .quick-btn:active {
-            transform: scale(0.97);
+        .quick-btn:hover {
             background: #eef2ff;
             border-color: #6366f1;
         }
+        .quick-btn:active {
+            transform: scale(0.97);
+            background: #e0e7ff;
+        }
 
-        /* Footer Input - iPhone Optimized */
+        /* Footer Input */
         .chat-footer {
             display: flex;
-            padding: clamp(12px, 3vh, 16px) clamp(16px, 4vw, 20px);
-            padding-bottom: max(12px, env(safe-area-inset-bottom, 16px));
+            padding: 12px 16px;
             border-top: 1px solid #e5e7eb;
             background: white;
             gap: 10px;
             align-items: center;
-            flex-shrink: 0; /* Prevent footer from shrinking */
-            min-height: 60px;
+            flex-shrink: 0;
+            min-height: 64px;
         }
         #chat-input {
             flex-grow: 1;
-            padding: clamp(12px, 3vw, 14px) clamp(14px, 4vw, 16px);
+            padding: 10px 16px;
             border: 1px solid #e5e7eb;
-            border-radius: 30px;
+            border-radius: 24px;
             outline: none;
-            font-size: 16px; /* Prevent iOS zoom on focus */
+            font-size: 14px;
             font-family: inherit;
-            transition: border 0.2s;
+            transition: all 0.2s;
             min-height: 44px;
-            -webkit-appearance: none; /* Remove iOS default styling */
+            -webkit-appearance: none;
             appearance: none;
             background: #f9fafb;
         }
         #chat-input:focus {
             border-color: #6366f1;
             background: white;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
         #send-btn {
             background: #6366f1;
             color: white;
             border: none;
-            border-radius: 30px;
-            padding: clamp(5px, 3vw, 7px) clamp(18px, 5vw, 22px);
+            border-radius: 24px;
+            padding: 10px 20px;
             cursor: pointer;
             font-weight: 600;
-            font-size: clamp(14px, 3.5vw, 15px);
-            transition: background 0.2s;
+            font-size: 14px;
+            transition: all 0.2s;
             min-height: 44px;
             white-space: nowrap;
             -webkit-tap-highlight-color: transparent;
@@ -490,9 +488,12 @@
             align-items: center;
             justify-content: center;
         }
+        #send-btn:hover {
+            background: #4f46e5;
+        }
         #send-btn:active {
             transform: scale(0.97);
-            background: #4f46e5;
+            background: #4338ca;
         }
         #send-btn:disabled {
             background: #cbd5e1;
@@ -505,7 +506,7 @@
             align-self: flex-start;
             background: white;
             padding: 12px 18px;
-            border-radius: 18px;
+            border-radius: 16px;
             border-bottom-left-radius: 4px;
             border: 1px solid #e5e7eb;
             display: flex;
@@ -538,23 +539,32 @@
             flex-shrink: 0;
         }
 
-        /* iPhone-specific styles */
-        /* iPhone SE, 6, 7, 8 */
+        /* iPhone SE, 6, 7, 8 - Full Screen */
         @media only screen and (max-width: 375px) {
+            .chat-window {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                width: 100%;
+                height: 100%;
+                height: -webkit-fill-available;
+                max-height: 100vh;
+                border-radius: 0;
+                padding-top: env(safe-area-inset-top, 0px);
+                padding-bottom: env(safe-area-inset-bottom, 0px);
+            }
             .chat-header {
-                padding: 10px 12px;
-                min-height: 56px;
+                padding-top: max(16px, env(safe-area-inset-top, 20px));
             }
             .chat-footer {
-                padding: 10px 12px;
-                padding-bottom: max(10px, env(safe-area-inset-bottom, 12px));
-                gap: 8px;
-                min-height: 56px;
+                padding-bottom: max(12px, env(safe-area-inset-bottom, 16px));
             }
             .quick-btn {
                 font-size: 11px;
                 padding: 8px 12px;
-                min-height: 40px;
+                min-height: 36px;
                 flex: 1 0 auto;
                 min-width: calc(50% - 6px);
                 white-space: normal;
@@ -574,40 +584,36 @@
             .adder-row {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 6px;
-            }
-            #chat-input {
-                font-size: 16px; /* Prevent zoom */
-                padding: 10px 14px;
-            }
-        }
-
-        /* iPhone X, XS, 11 Pro, 12 Mini, 13 Mini */
-        @media only screen and (max-width: 375px) and (min-height: 812px) {
-            .chat-window {
-                border-radius: 0;
-            }
-            .chat-header {
-                padding-top: max(12px, env(safe-area-inset-top, 44px));
-            }
-            .chat-footer {
-                padding-bottom: max(12px, env(safe-area-inset-bottom, 34px));
+                gap: 4px;
             }
         }
 
         /* iPhone 12, 12 Pro, 13, 13 Pro, 14 */
         @media only screen and (min-width: 376px) and (max-width: 428px) {
+            .chat-window {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                width: 100%;
+                height: 100%;
+                height: -webkit-fill-available;
+                max-height: 100vh;
+                border-radius: 0;
+                padding-top: env(safe-area-inset-top, 0px);
+                padding-bottom: env(safe-area-inset-bottom, 0px);
+            }
             .chat-header {
-                padding: 14px 16px;
+                padding-top: max(16px, env(safe-area-inset-top, 44px));
             }
             .chat-footer {
-                padding: 12px 16px;
-                padding-bottom: max(12px, env(safe-area-inset-bottom, 16px));
+                padding-bottom: max(12px, env(safe-area-inset-bottom, 34px));
             }
             .quick-btn {
                 font-size: 12px;
                 padding: 10px 14px;
-                min-height: 42px;
+                min-height: 40px;
                 flex: 1 0 auto;
                 min-width: calc(50% - 6px);
                 white-space: normal;
@@ -615,53 +621,47 @@
             }
         }
 
-        /* iPhone 12 Pro Max, 13 Pro Max, 14 Plus, 14 Pro Max */
+        /* Larger Phones - Professional Right Position */
         @media only screen and (min-width: 429px) and (max-width: 550px) {
             .chat-window {
-                max-width: 430px;
-                border-radius: 20px;
-                top: auto;
-                bottom: max(16px, env(safe-area-inset-bottom, 20px));
-                right: max(30px, env(safe-area-inset-right, 25px));
-                height: 90vh;
-            }
-            .chat-header {
-                border-radius: 20px 20px 0 0;
-                padding-top: 14px;
+                bottom: 20px;
+                right: 20px;
+                width: 360px;
+                height: 550px;
+                max-height: calc(100vh - 40px);
+                border-radius: 16px;
             }
             .quick-btn {
-                font-size: 13px;
-                padding: 10px 16px;
+                font-size: 12px;
+                padding: 10px 14px;
                 white-space: normal;
                 text-align: center;
             }
         }
 
-        /* iPad and larger tablets */
+        /* Tablet - Professional Right Position */
         @media only screen and (min-width: 768px) {
             .chat-window {
-                position: fixed;
-                top: auto;
-                bottom: max(16px, env(safe-area-inset-bottom, 20px));
-                right: max(16px, env(safe-area-inset-right, 20px));
-                width: 420px;
-                height: 650px;
-                border-radius: 24px;
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-            }
-            .chat-header {
-                border-radius: 24px 24px 0 0;
+                bottom: 28px;
+                right: 28px;
+                width: 380px;
+                height: 600px;
+                max-height: calc(100vh - 56px);
+                border-radius: 16px;
             }
             .quick-btn {
                 white-space: nowrap;
             }
         }
 
-        /* Desktop Large Screens */
+        /* Desktop - Professional Right Position */
         @media (min-width: 1200px) {
             .chat-window {
-                width: 420px;
-                height: 700px;
+                bottom: 32px;
+                right: 32px;
+                width: 400px;
+                height: 650px;
+                max-height: calc(100vh - 64px);
             }
         }
 
@@ -684,7 +684,7 @@
             <span>EHX Assistant</span>
         </div>
         <div class="header-actions">
-            <button id="end-chat-btn" title="End current chat and start fresh">⏹️ End Chat</button>
+            <button id="end-chat-btn" title="End current chat and start fresh">End Chat</button>
             <span id="chat-close">✕</span>
         </div>
     </div>
@@ -699,13 +699,6 @@
 </div>
 
 <!-- Tawk.to Live Chat Script - Replace YOUR_SITE_ID with your actual Tawk.to widget ID -->
-<!--
-  TO SET UP LIVE CHAT:
-  1. Go to https://www.tawk.to/ and sign up (free)
-  2. Get your widget ID (looks like: https://embed.tawk.to/YOUR_SITE_ID/default)
-  3. Replace the "YOUR_SITE_ID" in the src URL below
-  4. Uncomment the script tag
--->
 <!--
 <script>
   var Tawk_API = Tawk_API || {};
@@ -732,7 +725,6 @@
 
     // ========== iPhone Viewport Height Fix ==========
     function setViewportHeight() {
-        // Fix for iOS Safari 100vh issue
         const vh = window.innerHeight * 0.01;
         document.documentElement.style.setProperty('--vh', `${vh}px`);
     }
@@ -741,29 +733,16 @@
     window.addEventListener('orientationchange', setViewportHeight);
     setViewportHeight();
 
-    // ========== Prevent iOS Bounce/Rubber-band Effect ==========
-    document.body.addEventListener('touchmove', function(e) {
-        if (e.target === chatBody || chatBody.contains(e.target)) {
-            // Allow scrolling within chat body
-            return;
-        }
-        // Prevent default only if not in chat body
-    }, { passive: false });
-
     // ========== Tawk.to Live Chat Integration ==========
     function connectToLiveAgent() {
-        // Check if Tawk.to is loaded
         if (typeof Tawk_API !== 'undefined' && Tawk_API) {
-            // Show connecting message
             const connectMsg = document.createElement('div');
             connectMsg.classList.add('message', 'agent-connect');
             connectMsg.innerHTML = "🔄 Connecting you to a live support agent...";
             chatBody.appendChild(connectMsg);
             chatBody.scrollTop = chatBody.scrollHeight;
             
-            // Minimize the EHX chat window slightly and open Tawk.to
             setTimeout(() => {
-                // Open Tawk.to chat widget
                 if (Tawk_API.maximize) {
                     Tawk_API.maximize();
                 }
@@ -771,7 +750,6 @@
                     Tawk_API.toggle();
                 }
                 
-                // Add confirmation message
                 const agentMsg = document.createElement('div');
                 agentMsg.classList.add('message', 'agent-connect');
                 agentMsg.innerHTML = "💬 Live chat window opened! A support agent will be with you shortly. You can continue typing there.";
@@ -779,12 +757,10 @@
                 chatBody.scrollTop = chatBody.scrollHeight;
             }, 1000);
         } else {
-            // Fallback if Tawk.to not configured
             addMessage("📞 Live chat is not configured yet. Please contact our sales support directly:\n\n• Phone: (727) 266-0683\n• Email: salessupport@energyharborx.com", 'bot');
         }
     }
 
-    // Function to notify parent about chat state (for iframe sizing)
     function notifyParent(state) {
         if (window.parent && window.parent !== window) {
             window.parent.postMessage({ type: state }, '*');
@@ -1149,7 +1125,6 @@
         chatWindow.style.display = 'flex';
         circle.style.display = 'none';
         notifyParent('chatbot-open');
-        // Focus input after transition
         setTimeout(() => {
             chatInput.focus();
         }, 300);
@@ -1440,7 +1415,6 @@
         if (e.key === 'Enter') sendMessage();
     });
 
-    // Prevent iOS keyboard issues
     chatInput.addEventListener('focus', () => {
         setTimeout(() => {
             chatBody.scrollTop = chatBody.scrollHeight;
