@@ -15,6 +15,12 @@
             background: #1a1a2e;
             color: #ccc;
             width: 100%;
+            position: fixed; /* Changed from default to fixed */
+            bottom: 0; /* Stick to bottom of viewport */
+            left: 0; /* Stick to left edge */
+            z-index: 1000; /* Ensure it stays above other content */
+            max-height: 100vh; /* Prevent footer from taking full screen on small devices */
+            overflow-y: auto; /* Allow scrolling within footer if content is too tall */
         }
         
         .footer-container {
@@ -95,6 +101,12 @@
                 font-size: 11px;
                 padding-top: 20px;
             }
+            
+            /* Make footer smaller on mobile to not take up too much screen */
+            .site-footer {
+                max-height: 50vh; /* Limit height on smaller screens */
+                font-size: 0.9em;
+            }
         }
         
         @media (max-width: 480px) {
@@ -124,6 +136,10 @@
             .footer-contact li {
                 flex-wrap: wrap;
                 word-break: break-word;
+            }
+            
+            .site-footer {
+                max-height: 60vh; /* Adjust for very small screens */
             }
         }
     </style>
@@ -174,6 +190,12 @@
         
         window.addEventListener('load', sendHeight);
         window.addEventListener('resize', sendHeight);
+        
+        // Update height message when footer becomes fixed
+        // Since the footer is now fixed, we might want to send this info to the parent
+        window.addEventListener('load', function() {
+            window.parent.postMessage({ type: 'footerFixed', isFixed: true }, '*');
+        });
     </script>
 </body>
 </html>
