@@ -302,29 +302,45 @@
             display: block;
         }
         
-        /* ========== UNIFORM CHAT WIDGET STYLES ========== */
-        /* Chat Widget Container */
-        .chat-widget-container {
-            position: fixed;
-            bottom: 24px;
-            bottom: max(24px, env(safe-area-inset-bottom, 24px));
-            right: 24px;
-            right: max(24px, env(safe-area-inset-right, 24px));
-            z-index: 999;
-            width: auto;
-            height: auto;
-            pointer-events: none;
-        }
+       /* ========== UNIFORM CHAT WIDGET STYLES ========== */
+/* Chat Widget Container */
+.chat-widget-container {
+    position: fixed;
+    bottom: 24px;
+    bottom: max(24px, env(safe-area-inset-bottom, 24px));
+    right: 24px;
+    right: max(24px, env(safe-area-inset-right, 24px));
+    z-index: 999;
+    width: auto;
+    height: auto;
+    pointer-events: none;
+}
 
-        .chat-widget-container iframe {
-            width: 80px;
-            height: 80px;
-            border: none;
-            background: transparent;
-            pointer-events: auto;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
+.chat-widget-container iframe {
+    width: 80px;
+    height: 80px;
+    border: none;
+    background: transparent;
+    pointer-events: auto;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+/* Mobile adjustments */
+@media (max-width: 550px) {
+    .chat-widget-container {
+        bottom: 16px;
+        right: 16px;
+    }
+}
+
+/* Desktop */
+@media (min-width: 1200px) {
+    .chat-widget-container {
+        bottom: 32px;
+        right: 32px;
+    }
+}
 
         /* Chat open state - applied by JavaScript */
         .chat-widget-container iframe.chat-open {
