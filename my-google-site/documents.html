@@ -24,7 +24,6 @@
             background-attachment: fixed;
             background-repeat: no-repeat;
         }
-                /* ========== YOUR EXISTING CSS ABOVE HERE ========== */
         
         /* ========== ADD RESPONSIVE CSS BELOW ========== */
         
@@ -328,7 +327,6 @@
             margin-top: auto;
             padding-top: 16px;
             border-top: 1px solid #f0f0f0;
-            /* Remove flex-direction: row-reverse */
         }
 
         .document-date {
@@ -395,83 +393,51 @@
             background: #f8fafc;
         }
 
-   .footer-iframe {
-    width: 100%;
-    border: none;
-    height: auto;
-    min-height: 350px;
-    margin-top: 60px;
-    display: block;
-}
-      /* Chat Widget - Fixed position that doesn't block content */
-.chat-widget-container {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 999;
-    width: 380px;
-    height: 400px;
-    pointer-events: none;  /* Allows clicks to pass through the container */
-}
+        .footer-iframe {
+            width: 100%;
+            border: none;
+            height: auto;
+            min-height: 350px;
+            margin-top: 60px;
+            display: block;
+        }
 
-.chat-widget-container iframe {
-    pointer-events: auto;  /* Chatbot remains clickable */
-    width: 100%;
-    height: 100%;
-    border: none;
-    background: transparent;
-}
+        /* ========== UNIFORM CHAT WIDGET STYLES ========== */
+        .chat-widget-container {
+            position: fixed;
+            bottom: 24px;
+            bottom: max(24px, env(safe-area-inset-bottom, 24px));
+            right: 24px;
+            right: max(24px, env(safe-area-inset-right, 24px));
+            z-index: 999;
+            width: auto;
+            height: auto;
+            pointer-events: none;
+        }
 
-@media (max-width: 768px) {
-    .chat-widget-container {
-        width: calc(100vw - 40px);
-        height: calc(100vh - 100px);
-    }
-}
+        .chat-widget-container iframe {
+            width: 80px;
+            height: 80px;
+            border: none;
+            background: transparent;
+            pointer-events: auto;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
 
-@media (min-width: 1200px) {
-    .chat-widget-container {
-        width: 420px;
-        height: 700px;
-    }
-}
-
-            .page-title {
-                font-size: 28px;
-            }
-
-            .documents-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .quick-access {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .footer-iframe {
-                height: 480px;
-            }
-
+        /* Mobile adjustments */
+        @media (max-width: 550px) {
             .chat-widget-container {
-                width: calc(100vw - 40px);
-                right: 20px;
-                bottom: 20px;
+                bottom: 16px;
+                right: 16px;
             }
+        }
 
-            .document-meta {
-                flex-direction: column;
-                gap: 12px;
-                align-items: flex-start;
-            }
-
+        /* Desktop */
         @media (min-width: 1200px) {
             .chat-widget-container {
-                width: 420px;
-            }
-
-            .footer-iframe {
-                height: 360px;
+                bottom: 32px;
+                right: 32px;
             }
         }
     </style>
@@ -485,8 +451,7 @@
     <main class="main-content">
         <div class="page-header">
             <h1 class="page-title">📚 Documents & Resources</h1>
-            <p class="page-subtitle">Access all dealer resources, cheat sheets, spec sheets, and sales guides in one
-                place.</p>
+            <p class="page-subtitle">Access all dealer resources, cheat sheets, spec sheets, and sales guides in one place.</p>
         </div>
 
         <!-- Quick Access Banner -->
@@ -537,29 +502,87 @@
         </div>
     </main>
 
-   <iframe src="components/footer.html" class="footer-iframe" id="footerIframe" scrolling="no"></iframe>
-<div class="chat-widget-container">
-    <iframe src="components/chatbot.html"></iframe>
-</div>
+    <iframe src="components/footer.html" class="footer-iframe" id="footerIframe" scrolling="no"></iframe>
+
+    <!-- Chat Widget - UNIFORM -->
+    <div class="chat-widget-container">
+        <iframe 
+            id="chatbotIframe"
+            src="components/chatbot.html"
+            style="
+                position: fixed;
+                bottom: 24px;
+                right: 24px;
+                width: 80px;
+                height: 80px;
+                border: none;
+                background: transparent;
+                z-index: 9999;
+                overflow: visible;
+            ">
+        </iframe>
+    </div>
 
     <script>
-     window.addEventListener('message', function(event) {
-    // Header height adjustment
-    if (event.data.type === 'headerHeight') {
-        const headerIframe = document.getElementById('headerIframe');
-        if (headerIframe) {
-            headerIframe.style.height = event.data.height + 'px';
-        }
-    }
-    
-    // Footer height adjustment - ADD THIS
-    if (event.data.type === 'footerHeight') {
-        const footerIframe = document.getElementById('footerIframe');
-        if (footerIframe) {
-            footerIframe.style.height = event.data.height + 'px';
-        }
-    }
-});
+        // Handle messages from iframes
+        window.addEventListener('message', function(event) {
+            // Header height adjustment
+            if (event.data.type === 'headerHeight') {
+                const headerIframe = document.getElementById('headerIframe');
+                if (headerIframe) {
+                    headerIframe.style.height = event.data.height + 'px';
+                }
+            }
+            
+            // Footer height adjustment
+            if (event.data.type === 'footerHeight') {
+                const footerIframe = document.getElementById('footerIframe');
+                if (footerIframe) {
+                    footerIframe.style.height = event.data.height + 'px';
+                }
+            }
+
+            // Chatbot open/close - UNIFORM SIZING
+            const chatbotIframe = document.getElementById('chatbotIframe');
+            if (!chatbotIframe || !event.data || !event.data.type) return;
+
+            if (event.data.type === 'chatbot-open') {
+                chatbotIframe.style.width = '380px';
+                chatbotIframe.style.height = '600px';
+                chatbotIframe.style.borderRadius = '16px';
+                chatbotIframe.style.bottom = '24px';
+                chatbotIframe.style.right = '24px';
+                chatbotIframe.style.top = 'auto';
+                chatbotIframe.style.left = 'auto';
+                
+                // Mobile adjustments
+                if (window.innerWidth <= 550) {
+                    chatbotIframe.style.width = 'calc(100vw - 32px)';
+                    chatbotIframe.style.height = 'calc(100vh - 32px)';
+                    chatbotIframe.style.maxHeight = '600px';
+                    chatbotIframe.style.bottom = '16px';
+                    chatbotIframe.style.right = '16px';
+                }
+                
+                // Desktop adjustments
+                if (window.innerWidth >= 1200) {
+                    chatbotIframe.style.width = '400px';
+                    chatbotIframe.style.height = '650px';
+                    chatbotIframe.style.bottom = '32px';
+                    chatbotIframe.style.right = '32px';
+                }
+            }
+
+            if (event.data.type === 'chatbot-closed') {
+                chatbotIframe.style.width = '80px';
+                chatbotIframe.style.height = '80px';
+                chatbotIframe.style.borderRadius = '50%';
+                chatbotIframe.style.bottom = '24px';
+                chatbotIframe.style.right = '24px';
+                chatbotIframe.style.top = 'auto';
+                chatbotIframe.style.left = 'auto';
+            }
+        });
 
         // Document data
         const cheatSheets = [
@@ -696,7 +719,7 @@
         renderDocuments('salesToolsGrid', salesTools);
         renderDocuments('pricingGrid', pricingGuides);
 
-        // Download all button (placeholder - you can add a ZIP file later)
+        // Download all button
         const downloadAllBtn = document.getElementById('downloadAllBtn');
         if (downloadAllBtn) {
             downloadAllBtn.addEventListener('click', function (e) {
