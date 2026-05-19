@@ -61,7 +61,7 @@
             bottom: max(24px, env(safe-area-inset-bottom, 24px));
             right: 24px;
             right: max(24px, env(safe-area-inset-right, 24px));
-            width: 300px;
+            width: 380px;
             height: 600px;
             max-height: calc(100vh - 48px);
             max-height: calc(100vh - max(48px, env(safe-area-inset-bottom, 24px) + 24px));
@@ -476,22 +476,23 @@
             background: white;
         }
         #send-btn {
-            background: #6366f1;
-            color: white;
-            border: none;
-            border-radius: 30px;
-            padding: clamp(5px, 3vw, 7px) clamp(18px, 5vw, 22px);
-            cursor: pointer;
-            font-weight: 600;
-            font-size: clamp(14px, 3.5vw, 15px);
-            transition: background 0.2s;
-            min-height: 44px;
-            white-space: nowrap;
-            -webkit-tap-highlight-color: transparent;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    background: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: clamp(5px, 3vw, 7px) clamp(18px, 5vw, 22px);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: clamp(14px, 3.5vw, 15px);
+    transition: background 0.2s;
+    min-height: 44px;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;    /* ← ADD THIS - prevents button from shrinking */
+}
         #send-btn:active {
             transform: scale(0.97);
             background: #4f46e5;
@@ -547,12 +548,19 @@
                 padding: 10px 12px;
                 min-height: 56px;
             }
-            .chat-footer {
-                padding: 10px 12px;
-                padding-bottom: max(10px, env(safe-area-inset-bottom, 12px));
-                gap: 8px;
-                min-height: 56px;
-            }
+           .chat-footer {
+    display: flex;
+    padding: clamp(12px, 3vh, 16px) clamp(16px, 4vw, 20px);
+    padding-bottom: max(12px, env(safe-area-inset-bottom, 16px));
+    border-top: 1px solid #e5e7eb;
+    background: white;
+    gap: 10px;
+    align-items: center;
+    flex-shrink: 0;
+    min-height: 60px;
+    width: 100%;    /* ← ADD THIS */
+    box-sizing: border-box;    /* ← ADD THIS */
+}
             .quick-btn {
                 font-size: 11px;
                 padding: 8px 12px;
